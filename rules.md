@@ -11,3 +11,5 @@ rules
 - better better better: if improvement seem then etter better is expontially smaller. so dont stop till you find better to least 4 times
 - cluster before doing stats
 - use stats less
+- stochastics for scalbikity
+- 
