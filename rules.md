@@ -1,0 +1,11 @@
+- bias makes us blidn, bias lets us see
+- use bias
+- document bias
+- sample across saplce of bias
+- cut the crap, use what's left
+- baseline taccitic: assume keys see how far you go
+- use volumes, not point
+- random projtions, not raw data
+- better better better: if improvement seem then etter better is expontially smaller. so dont stop till you find better to least 4 times
+- cluster before doing stats
+- use stats less
