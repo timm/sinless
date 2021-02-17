@@ -9,3 +9,8 @@ what might it eman:
 
 - confidence that you can do other thigns cause this thing won't hurt you
 - joint explroation of a sapce with an au. what does that explore eman?
+- community-level testing (support for ethical opoerators)
+-t estign as structured argument
+
+short cuts tot esting
+- keys, the shorter papre
