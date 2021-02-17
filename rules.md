@@ -1,6 +1,21 @@
 rules
 
-- bias makes us blidn, bias lets us see
+- DIY: dont trust what i say, do it for your self
+- LIM: less is more
+- many dimensions can be approxived by just a few ranges
+- those ranges cocur att different frequencies in desired and undesired goals
+- simple to build tools taht learn what combinations range are most advangageus or dangerous
+- sample stochastically to find the keys, explore combos of the keys
+- if you cant sn zero then at least sin less
+- ethics: u are, u shoiuld, u cam
+- dont grow on S1 then eval on S2 
+- start as tyou eman to go on. if evaling using SE then grow w=using SE
+- there is no best eval criteria.
+- comptuers are stupodm then only give you naswers
+- the only good answer is the one that destroys the question
+- hold hands with AI, walk the world together
+- best or rest, nothing lese matters.
+-  bias makes us blidn, bias lets us see
 - use bias
 - document bias
 - sample across saplce of bias
