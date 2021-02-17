@@ -1,3 +1,5 @@
+rules
+
 - bias makes us blidn, bias lets us see
 - use bias
 - document bias
