@@ -17,6 +17,8 @@ ur invoved in ethical decions,  perputating certain curent  social structures, d
 
 ethical repsonsibility
 
+Public outcry . Thanod
+
 ## u can
 
 u have more choices that you know. "youve given me too many knobs".  so many models.a billlion options mysql . power and throughout and control.  build ocn crweitra C1,c,2 c3, soetne of c4 c5 c6 (random number choice if we actually successed on thos). so many choices.
