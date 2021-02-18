@@ -1,4 +1,10 @@
-# sinless
+#  Sinless software engineering
+
+When lawyers and politicians cannot keep up with technical innovations, it is up to us technologists to deliberately sin less.  When  we might not be able to aways avoid undesirable  social effects of our technology, we should at least try to write software that sins less, whenever it can. 
+
+ This subject treats ethics as an AI-based optimization problem where software makes  choices that at least monitors, and at most improves, the ethical impact of software. Topics covered will include ethics, case studies in ethical software, international standard for ethics in AI and software engineering, safety engineering, data mining, pareto optimization, multi-objective optimization,   bayesian parameter optimization, discretization, explanation, planning,. 
+
+Projects will be determined by student background: skilled programmers will build AI tools that make better ethical choice; other students will do extensive case studies in ethics and software engineering. 
 
 ## lecture1: u r, u should, u can
 
