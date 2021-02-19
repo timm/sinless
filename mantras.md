@@ -30,7 +30,7 @@ Small needs lead to a large life.
 -- Unknown
 
 Simplex sigillum veri.  
-(Simplicity is the sign of truth.). 
+(Simplicity is the sign of truth.).      
 -- Hermann Boerhaave
 
 Less is more.  
