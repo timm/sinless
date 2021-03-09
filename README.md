@@ -32,3 +32,9 @@ gender mag
 design for different genders
 
 
+# Exercise for week1
+
+1. here;s my definition of ethical: humans can interact understand and change a system. made easier by keys. what missing from that definition? what kind of ethical problems are mssing in the above? for the missing bits, as a comptuer scientist, howmight you address those isses (using insights from algorithms, and insights from data). what could you implement to test that?
+2. what about deep learning? is all that antithetical to the above? or is that a way to find the features and structures that make all the above more possible? what could you implement to test that?
+3. I kep saying "what coud you implement?". Is this "comptuational view" missing the point? are their improtant ethical issues that are missed if we only study what we can implement?
+
