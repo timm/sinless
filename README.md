@@ -20,16 +20,42 @@ at the very least you'll become expert at AI programming
 and gain a sophisticate understanding of issues relating to
 ethics and ai
 
+and this is certaininly the  time to try and be an expert in these choice-driven technologies (see 'governement by algorothm')
+
+also, there is movment in the marketplace suggesting that experts in this  area could have a solid career:
+The report evaluates DSML platforms’ scope, revenue and growth,
+customer counts, market traction, and product capability scoring.
+Here are some of the notable findings:
+
+Responsible AI governance, transparency, and addressing model-based
+biases are the most valuable differentiators in this market, and
+every listed vendor is making progress in these areas.
+
+
+## details
 no exam, no mid-term
 
+week1: hello
+
+week  2-9- homeworls
 8 one-week homeworks
+
+week 10 to  13:
 one month-long project where you build an argument environment
 where humans can dispute and change the decision from an AI
 
-finally, two small reports : 
+week 15: an exam with 2 parts/
 
-1. is ethics just an algorthmic issue?  
-2. design a syllabus for this subject. 
+a take home exam two parts (and feel free to do all thework before hand)
+1. is ethics just an algorthmic issue?  (3-4 apges, 10 point 2 column)
+
+final exam: take home. 24 hours to  complete
+1-3 pages.
+3. design a syllabus for this subject.  include comments o algorithma nd non-algorithm aprpoaches, list open issues
+in the area. list the kinds of areas this sibject should cover to address those issues. extra marks for those that
+go far afield and list methods not discussed (or only partially discussed) in this subejct. offer a lesson  plan 
+showing week by week how kong we shiuld talk to what. describe (at a hgih level) the himes and projects wyou wiul set for this
+subject.
 
 report 1 due anytime after 1 month in. report2 due at end of
 terms
