@@ -1,3 +1,4 @@
+
 #  Sinless software engineering
 
 When lawyers and politicians cannot keep up with technical innovations, it is up to us technologists to deliberately sin less.  When  we might not be able to aways avoid undesirable  social effects of our technology, we should at least try to write software that sins less, whenever it can. 
@@ -7,6 +8,31 @@ When lawyers and politicians cannot keep up with technical innovations, it is up
 Projects will be determined by student background: skilled programmers will build AI tools that make better ethical choice; other students will do extensive case studies in ethics and software engineering. 
 
 ## lecture1: u r, u should, u can
+
+this subject is about an unproven idea, based on
+proven technology taht very few people know about
+
+if i get this right, i will, at most, show you a new kind
+of AI, one where humans and AI can team up and one
+can audit, critique and improve the other.
+
+at the very least you'll become expert at AI programming
+and gain a sophisticate understanding of issues relating to
+ethics and ai
+
+no exam, no mid-term
+
+8 one-week homeworks
+one month-long project where you build an argument environment
+where humans can dispute and change the decision from an AI
+
+finally, two small reports : 
+
+1. is ethics just an algorthmic issue?  
+2. design a syllabus for this subject. 
+
+report 1 due anytime after 1 month in. report2 due at end of
+terms
 
 ur invoved in ethical decions,  perputating certain curent  social structures, dismepowering certain groups. u have for years. nobel change within change. facebook etc.
 
@@ -37,4 +63,11 @@ design for different genders
 1. here;s my definition of ethical: humans can interact understand and change a system. made easier by keys. what missing from that definition? what kind of ethical problems are mssing in the above? for the missing bits, as a comptuer scientist, howmight you address those isses (using insights from algorithms, and insights from data). what could you implement to test that?
 2. what about deep learning? is all that antithetical to the above? or is that a way to find the features and structures that make all the above more possible? what could you implement to test that?
 3. I kep saying "what coud you implement?". Is this "comptuational view" missing the point? are their improtant ethical issues that are missed if we only study what we can implement?
+
+## maths
+
+Druzdel's law: ignored space in joint distributions (increases as dimineions increase)
+
+binimoal sampling: C=1-(1-p)<sup>n</sup>
+
 
