@@ -170,3 +170,18 @@ But it will be difficult for Google to regain trust — both inside the company 
 
 “They think they can get away with firing these people and it will not hurt them in the end, but they are absolutely shooting themselves in the foot,” said Alex Hanna, a longtime part of Google’s 10-member Ethical A.I. team. “What they have done is incredibly myopic.”
 
+------
+
+You Can't Sit With Us: Exclusionary Pedagogy in AI Ethics Education
+Share on
+Authors:  
+Inioluwa Deborah Raji profile imageInioluwa Deborah Raji
+,  + 2  Authors Info & Affiliations
+Publication:
+FAccT '21: Proceedings of the 2021 ACM Conference on Fairness, Accountability, and TransparencyMarch 2021 Pages 515–525https://doi.org/10.1145/3442188.3445914
+0citationDownloads
+ 
+eReaderPDF
+83References
+ABSTRACT
+Given a growing concern about the lack of ethical consideration in the Artificial Intelligence (AI) field, many have begun to question how dominant approaches to the disciplinary education of computer science (CS)---and its implications for AI---has led to the current "ethics crisis". However, we claim that the current AI ethics education space relies on a form of "exclusionary pedagogy," where ethics is distilled for computational approaches, but there is no deeper epistemological engagement with other ways of knowing that would benefit ethical thinking or an acknowledgement of the limitations of uni-vocal computational thinking. This results in indifference, devaluation, and a lack of mutual support between CS and humanistic social science (HSS), elevating the myth of technologists as "ethical unicorns" that can do it all, though their disciplinary tools are ultimately limited. Through an analysis of computer science education literature and a review of college-level course syllabi in AI ethics, we discuss the limitations of the epistemological assumptions and hierarchies of knowledge which dictate current attempts at including ethics education in CS training and explore evidence for the practical mechanisms through which this exclusion occurs. We then propose a shift towards a substantively collaborative, holistic, and ethically generative pedagogy in AI education.
