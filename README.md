@@ -27,8 +27,9 @@ do not offer clean up for
 the mess they make. remember, the cat in the hat dis disrupt, but hw also had a
 clearning [machineO](machineO)
 
+<img src="/docs/pdf/mess.png" height=200>  &rarr;
 <img src="https://thenewswheel.com/wp-content/uploads/2018/02/Cat-in-the-Hat-Clean.jpg" 
-height=200><img src="/docs/pdf/mess.png" height=200>
+height=200>
 
 ## lecture1: u r, u should, u can
 
