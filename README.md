@@ -7,6 +7,29 @@ When lawyers and politicians cannot keep up with technical innovations, it is up
 
 Projects will be determined by student background: skilled programmers will build AI tools that make better ethical choice; other students will do extensive case studies in ethics and software engineering. 
 
+# what is this subect about
+
+AI, with symbols.
+
+AI, a lighter, learner approach.
+learning when enough is enough. Seek summaries of data, not endless 
+streams of irrelevant detail.
+"We believe that ethical technology is technology
+that works for you," said Cook. "It's technology that helps you
+sleep, not keeps you up. It tells you when you've had enough. It
+gives you space to create or draw or write or learn, not refresh
+just one more time."
+
+
+A protest: tired of my work weing in organizations
+that
+do not offer clean up for 
+the mess they make. remember, the cat in the hat dis disrupt, but hw also had a
+clearning [machineO](machineO)
+
+<img src="https://thenewswheel.com/wp-content/uploads/2018/02/Cat-in-the-Hat-Clean.jpg" 
+height=200><img src="/docs/pdf/mess.png" height=200>
+
 ## lecture1: u r, u should, u can
 
 this subject is about an unproven idea, based on
