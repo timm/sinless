@@ -21,13 +21,22 @@ gives you space to create or draw or write or learn, not refresh
 just one more time."
 
 
-A protest: tired of my work weing in organizations
+A protest: tired of my work being in organizations
 that
 do not offer clean up for 
-the mess they make. remember, the cat in the hat dis disrupt, but hw also had a
+the mess they make. 
+(btw, nothing wrong with  a little 
+disrupt. disrupt = innovation = opportutnity to make tings better. but
+an organization, and a society, that endorses disprut also needs to endorse
+support actions for curtialing bad disrupt nd spporting the unforfotuensates effected engative;y h disrupt. oterwise,
+we jst get prodctiona and pollution without clean up).
+remember, the cat in the hat did do disrupt, 
+
+<img src="/docs/pdf/mess.png" height=200>  
+
+but hw also had a
 clearning [machineO](machineO)
 
-<img src="/docs/pdf/mess.png" height=200>  &rarr;
 <img src="https://thenewswheel.com/wp-content/uploads/2018/02/Cat-in-the-Hat-Clean.jpg" 
 height=200>
 
