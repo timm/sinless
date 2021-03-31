@@ -1,5 +1,7 @@
 # Project
 
+part1: dumbest incremental system possibele. incremenal bayes classifier
+
 Write two AI tools that incrementally updates a model after asking some oracle for an pinon
 (about something). Allow a human to revisit and change old decisions then replay all the processing
 from that decision, coming forwards (perhaps asking humans new information as it does so).
