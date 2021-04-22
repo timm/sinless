@@ -34,3 +34,10 @@ noice sesnisity: add in random number genrato to the conclusions you get from yo
 recommend you work in pthna dn use repl.iy for your experimetnal set u
 
 10 marks come from igna lab rate insoemthon else's 
+
+## part2:
+do something with the code
+
+- show how where the current. code base fails (cause data size gets better)
+-  do something to optimize it. anohter language. better data structures. rethink the core processing. something.
+-  
