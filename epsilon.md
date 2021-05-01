@@ -71,23 +71,23 @@ control is simpler since there is less to model and control.
    mistakes about the standard deviation.
 5. If the probability of success on one attempt is _p_, then the
    probability of failure on each attempt is _(1-p)_ and the probability
-   of _n_ failures in a row is (1-p)<sup>5</sup>.  Hence, the
-   probability of at least one success is _S= 1–(1-p)<sup>n</sup>_. 
-   - Solve this equation for _n_. Check your results at _[Wolfram Alpha](https://www.wolframalpha.com)_
+   of _n_ failures in a row is (1-p)<sup>n</sup>.  Hence, the
+   probability of at least one success is     
+   _s= 1–(1-p)<sup>n</sup>_. 
+   - Solve this equation for _n_. Check your results at 
+     _[Wolfram Alpha](https://www.wolframalpha.com)_
      using the query<br>
      _s=1-(1-p)^n,  0<p<1, 0<s<1,  solve for n_
    - As _s_ approaches 1, what happens to the number of tests _n_ for events
-     occurring at a 1% probability? Try, for example, _s=,9,.95,.99_ 
+     occurring at a 1% probability? Try, for example, _s=0.90,0.95,0.99_ 
    - Recall your calculation of $d$ from Question1. How many samples do
      we need to be 95\% sure we can find a solution with probability 1/d?
    - A standard genetic algorithm makes 10<sup>4</sup> attempts to improve a solution
      (100 individuals mutated across 100 generations).  Given your _1/d_ Cohen result,
      what do you think of the need for 10<sup>4</sup> samples?
-  
 6. Cohen's rule, while simple, is often depreciated (since it makes naive parametric
    assumptions
    that the data is a symmetric curve with one single maximum point). An alternate
    method, that 
-
 7. All the above seems to be  saying that learning can be successful from  a very
    small number of samples. What is the counter-case to all the above?
