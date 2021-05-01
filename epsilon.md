@@ -40,7 +40,7 @@ Large &epsilon;s are  everywhere:
     a distribution: see [lib#sd](http://menzies.us/keys/lib.html#sd)):
    - Let &mu;=10 and &sigma;=5. Given Cohen's rule, what &epsilon; would you propose for this
    data.
-   - For  many purposes, a normal Gaussian curve runs over &mu;&plusmn;2&sigma;.  
+   - For  many purposes, a normal Gaussian curve runs over &mu; &plusmn; 2&sigma;.  
      For those purposes, what does Cohen's rule say about the effective number of
      divisions $d$ of that data?
 2. There are many  ways to calculate standard  deviation but my favorite is to
