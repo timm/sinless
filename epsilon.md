@@ -1,30 +1,30 @@
 # Epsilon Reasonong
 
-Call  the limits to reasoning _epsilon_ (&epsilon;). When two solutions differ by less than
-&epsilon;
-then  they are indistinguishable.
+Call  the limits to reasoning _epsilon_ (&epsilon;). When two
+solutions differ by less than &epsilon; then  they are indistinguishable.
 
-&epsilon; is a useful early stopping  criteria.
-When solutions are indistinguishable then better solutions cannot be deleted, so
-you might as  well stop.
+&epsilon; is a useful early stopping  criteria.  When solutions are
+indistinguishable then better solutions are unrecognizable (so you
+might as  well stop).
 
 
-When &epsilon; is large then many examples are actually repeats of a smaller number
-of concepts. And when that is true, modeling and control is simpler since there is
-less to model and control.
+When &epsilon; is large then many examples are actually repeats of
+a smaller number of concepts. And when that is true, modeling and
+control is simpler since there is less to model and control.
 
 &espilon; is  everywhere:
 - Sometimes our instrumentation
-is  only good at collecting data within  &plumn;&epsilon;. In that case, 
-there is no point exploring issues at &epsilon;/2.
+  is  only good at collecting data within  &plumn;&epsilon;. In that case, 
+  there is no point exploring issues at &epsilon;/2.
 - When processes only allow approximate control of parameters
-within some degree of &espilon;, then there  is  little point trying to propose
-solutions that are less that &epsilon; of the current  solution.
-For example,
+  within some degree of &espilon;, then there  is  little point trying to propose
+  solutions that are less that &epsilon; of the current  solution.
+  For example,
   - If  car drivers can control
-the speed of  a car within &plusmn; 5s&nbsp; mph, then we should tell them
-"drive around 45&nbsp;mpg" rather than "drive at exactly "43&nbsp;mph:.
-  - In many "human-oriented" 
+    the speed of  a car within &plusmn; 5s&nbsp; mph, then we should tell them
+    "drive around 45&nbsp;mpg" rather than "drive at exactly "43&nbsp;mph:.
+  - In many "human-oriented" control problems, you cannot ask people to change
+    too much. So humans are "controllable" only within some &epsilon;.
 - Some experimental methods repeat the same analysis, say, 20
   times 
   (each time using 90% of the data). This can generates 20 numbers that all
@@ -46,9 +46,11 @@ the speed of  a car within &plusmn; 5s&nbsp; mph, then we should tell them
 2. There are many  ways to calculate standard  deviation but my favorite is to
    sort all the numbers seen so far then divide the  90th percentile minus the 10th
    percentile by 2.56 
-   (this method means that if we ever want to access (say) the 30th percentile, 
-   we have access to all those numbers).
-   Using a [table of normal z-values](https://www.math.arizona.edu/~rsims/ma464/standardnormaltable.pdf_,
+    - This method means that if we ever want to access (say) the 30th percentile, 
+      we have access to all those numbers.
+    - Also, this method makes no restrictive assumption that the data is symmetrical
+      or normal.
+   Using a [table of normal z-values](https://www.math.arizona.edu/~rsims/ma464/standardnormaltable.pdf),
    conform the above "2.56" values. (Hint:
    if 2.56 stretches 90th to 10th percentile then 2.56/2=1.28 is  half that; so see where
    1.28 falls in the table).
@@ -58,14 +60,14 @@ the speed of  a car within &plusmn; 5s&nbsp; mph, then we should tell them
    - Keeps the  first  (say) `max=256` numbers,
    - After which time, new numbers replace old numbers in the reservoir at probability
    `max/n` (where `n` is the total number of  numbers  seen so far);
-   - If ever a number is  kept, then set a flag `ok=false`
-   - If ever we want percentiles from this list, if `ok=false`, we first  sort the list
-     and  set `ok=true`.
+   - If ever a number is  kept, then set a flag `unordered=true`
+   - If ever we want percentiles from this list, if `unordered`, we first  sort the list
+     and  set `unordered=false`.
    Implement this reservoir sampler: 
    - Compute the standard deviation of 1000 random numbers.
-   - Starting at `max=256` and decreasing down to `max=16`, when do we start making
+   - Starting at `max=10` and increasing by 50  to `max=500`, when do we start making
    mistakes about the standard deviation.
-5. 4. If the probability of success on one attempt is _p_, then the
+5. If the probability of success on one attempt is _p_, then the
    probability of failure on each attempt is _(1-p)_ and the probability
    of _n_ failures in a row is (1-p)<sup>5</sup>.  Hence, the
    probability of at least one success is _S= 1–(1-p)<sup>n</sup>_. 
