@@ -63,6 +63,7 @@ control is simpler since there is less to model and control.
    - If ever a number is  kept, then set a flag `unordered=true`
    - If ever we want percentiles from this list, if `unordered`, we first  sort the list
      and  set `unordered=false`.
+
    Implement this reservoir sampler: 
    - Compute the standard deviation of 1000 random numbers.
    - Starting at `max=10` and increasing by 50  to `max=500`, when do we start making
