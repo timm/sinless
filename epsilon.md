@@ -65,7 +65,8 @@ control is simpler since there is less to model and control.
      and  set `unordered=false`.
 
    Implement this reservoir sampler: 
-   - Compute the standard deviation of 1000 random numbers.
+   - Compute the standard deviation of a million  numbers _r()<sup>.5</sup>_ i
+     (i.e. square root of a random number).
    - Starting at `max=10` and increasing by 50  to `max=500`, when do we start making
    mistakes about the standard deviation.
 5. If the probability of success on one attempt is _p_, then the
@@ -82,6 +83,11 @@ control is simpler since there is less to model and control.
    - A standard genetic algorithm makes 10<sup>4</sup> attempts to improve a solution
      (100 individuals mutated across 100 generations).  Given your _1/d_ Cohen result,
      what do you think of the need for 10<sup>4</sup> samples?
-6. Cohen's rule, while simple, is often depreciated.
+  
+6. Cohen's rule, while simple, is often depreciated (since it makes naive parametric
+   assumptions
+   that the data is a symmetric curve with one single maximum point). An alternate
+   method, that 
+
 7. All the above seems to be  saying that learning can be successful from  a very
    small number of samples. What is the counter-case to all the above?
