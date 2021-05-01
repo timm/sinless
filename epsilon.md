@@ -37,7 +37,7 @@ the speed of  a car within &plusmn; 5s&nbsp; mph, then we should tell them
    i.e. Values that differ by less than 30% of the standard deviation are essentially
    the same 
    (standard deviation is a measure  of "wriggle" around the central tendency of
-    a distribution: see [lib.lua#sd](http://menzies.us/keys/lib.lua#sd)):
+    a distribution: see [lib#sd](http://menzies.us/keys/lib.html#sd)):
    - Let &mu;=10 and &sigma.=5. Given Cohen's rule, what &epsilon; would you propose for this
    data.
    - For  many purposes, a normal Gaussian curve runs over &mu;&plumn;2&sigma;.  
