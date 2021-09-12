@@ -1,6 +1,6 @@
 from types import FunctionType as fun
 import sys,traceback
-from ranger import *
+from sinless import *
 from cli import cli
 
 class Eg:
@@ -22,21 +22,18 @@ class Eg:
     for _ in range(10000): n.add(int(100*r()))
     print(n.dist("?",20))
   def data(my):
-    d=Data(my).load("weather.csv")
+    d=Sample(my).load("weather.csv")
     print(d.x[1])
   def dist(my):
-    d=Data(my).load("auto93.csv")
+    d=Sample(my).load("auto93.csv")
     for row1 in d.rows:
       c,row2 = d.far(d.rows,row1)
       print("")
       print(row1.cells)
       print(row2.cells,int(100*c))
   def cluster(my):
-    d=Data(my).load("auto93.csv")
+    d=Sample(my).load("auto93.csv")
     d.cluster()
-
-          
-      
 
 def _main(todo=Eg._noop, egs={}):
   """(1) Update the config using any command-line settings.
