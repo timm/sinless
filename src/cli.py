@@ -14,7 +14,7 @@ def cli(usage, dict=about.CONFIG):
   used = {}
   for k, (ako, default, help) in sorted(dict.items()):
     k0 = k[0]
-    if k0 in used: k0=k0.upper()
+    k0 = k0.upper() if k0 in used else k0
     c = used[k0] = k0  # (3)
     if default == False: # (2)
       add("-"+c, dest=k, default=False, help=help, action="store_true")

@@ -14,14 +14,14 @@ How to sinless:
 - Use epsilon domination to stop needlessly explore spurious details
 - Use all the above in Hyperparameter optimizers so you can optimize the tool.
 """
-import re, random
+import re, math, random
 from lib import o,csv,first
 r = random.random
  
 
 class Skip(o):
   "Column: Make something that ignores everything it sees."
-  def __init__(i,_,n=0,s=""): i.n,i.at,i.txt = 0,n,s
+  def __init__(i,_,n=0,s=""): i.n,i.at,i.txt,i.w = 0,n,s,1
   def add(i,x):  return  x
   def mid(i):    return "?"
   def prep(i,x): return x
@@ -30,7 +30,7 @@ class Sym(o):
   "Symbol counter."
   def __init__(i,my={},n=0,s=""): 
     "Creation"
-    i.n,i.at,i.txt,i.has = 0,n,s,{}
+    i.n,i.at,i.txt,i.has,i.w = 0,n,s,{},1
     i.mode, i.most = None,0
 
   def add(i,x,n=1): 
@@ -89,19 +89,22 @@ class Num(o):
 
   def dist(i,x,y):
     "Distance: between two numbers."
-    def norm(z): return (z-i.lo) / (i.hi - i.lo +1E-31)
     if x=="?" and y=="?": return 1
     if x=="?": 
-      y = norm(y); x = 0 if y > 0.5 else 1
+      y = i.norm(y); x = 0 if y > 0.5 else 1
     elif y=="?": 
-      x = norm(x); y = 0 if x > 0.5 else 1
+      x = i.norm(x); y = 0 if x > 0.5 else 1
     else:
-      x,y = norm(x), norm(y)
+      x,y = i.norm(x), i.norm(y)
     return abs(x - y)
 
   def mid(i):  
     "Query: mid point of the numbers."
     return i.per()
+
+  def norm(i,x): 
+    "Query: return 0..1"
+    return (x-i.lo) / (i.hi - i.lo +1E-31)
 
   def per(i,p=.5,lo=None,hi=None):
     "Query: Return the item that is `p-th` beteeen `lo` and `hi`"
@@ -114,48 +117,65 @@ class Num(o):
     "Creation: Coerce `x` to a float."
     return x if x=="?" else float(x)
 
-  def sd(i): 
+  def var(i): 
     """<img align=right width=300 
         src="https://miro.medium.com/max/1400/1*IZ2II2HYKeoMrdLU5jW6Dw.png">
-    - Plus or minus (1,2) sd is (66%,95%) of the mass. 
-    - So plus or minus 1.28 is 90% of the mass. 
-    - So one standard deviation is 90% of the mass divided by 2.56.<br clear=all>"""
+    Query: variability.
+    - You know how plus or minus (1,2) sd is (66%,95%) of the mass? 
+    - Well, plus or minus 1.28 is 90% of the mass. 
+    - So one standard deviation is 90% of the mass divided by (1.28*2)=2.56.<br clear=all>"""
     return (i.per(.9) - i.per(.1)) / 2.56
 
 class Row(o):
   "Data: store rows"
-  def __init__(i,lst): i.cells, i.ranges = lst,[None]*len(lst)
+  def __init__(i,lst,sample): 
+     i.sample,i.cells, i.ranges = sample, lst,[None]*len(lst)
+
+  def __lt__(i,j):
+    "Does row1 win over row2?"
+    s1, s2, n = 0, 0, len(i.sample.y)
+    for col in i.sample.y:
+      a   = col.norm(i.cells[col.at])
+      b   = col.norm(i.cells[col.at])
+      s1 -= math.e**(col.w * (a - b) / n)
+      s2 -= math.e**(col.w * (b - a) / n)
+    return s1 / n < s2 / n
+
+  def ys(i):
+    "Query: the goal values of this row"
+    return [i.cells[col.at] for col in i.sample.y]
 
 class Sample(o):
   "Data: store rows and columns"
-  def __init__(i,my): 
+  def __init__(i,my, inits=[]): 
     "Creation"
-    i.cols, i.rows, i.x, i.y = [],[],[],[]
-    i.my = my
+    i.cols, i.rows, i.x, i.y, i.my = [],[],[],[], my
+    [i.row(init) for init in inits]
 
-  def load(i,file): 
-    "Creation: Load data from a csv file in a Data instance."
-    for lst in csv(file): i.row(lst)
-    return i
+  def __lt__(i,j):
+    "Sort tables by their mid values."
+    return  Row(i.mid(),i) < Row(j.mid(), j)
 
-  def row(i,lst):
-    """Update: Turn `lst` into either a `header` (if it is row0) 
-    or a `row` (for every other  line)."""
-    if i.cols: i.rows += [Row([c.add(c.prep(x)) for c,x in zip(i.cols,lst)])]
-    else: i.header(lst)
+  def clone(i,inits=[]):
+    "Copy: return a new sample with same structure as self"
+    return Sample(i.my, 
+                  inits=[[col.txt for col in i.cols]]+inits)
 
-  def header(i,lst):
-    "Creation: Create columns. Store dependent and independent columns in `x` and `y`"
-    for c,x in enumerate(lst):
-      what= Skip if "?" in x else (Num if x[0].isupper() else Sym)
-      new = what(i.my,c,x)
-      i.cols += [new]
-      if "?" not in x:
-        what = i.y if ("+" in x or "-" in x or "!" in x) else i.x
-        what += [new]
+  def cluster(i):
+    "Distance: Divide `d.rows` into a tree of  `depth`."
+    out = []
+    def div(rows, depth):
+      if depth > i.my.depth  or len(rows) < i.my.end:
+        out.append(i.clone(rows))
+      else:
+        left, right  = i.polarize(rows)
+        div(left,  depth + 1)
+        div(right, depth + 1)
+    div(i.rows, 1)
+    return out
 
   def dist(i,r1,r2):
-    "Distance:between two rows"
+    "Distance: between two rows"
     d, n = 0, 1E-32
     for col in i.x:
       inc = col.dist( r1.cells[col.at], r2.cells[col.at] )
@@ -168,8 +188,27 @@ class Sample(o):
     random.shuffle(rows)
     rows = sorted([(i.dist(r1,r2),r2) for r2 in rows[:128]], key=first)
     return rows[int(i.my.far*len(rows))]
+
+  def header(i,lst):
+    "Creation: Create columns. Store dependent and independent columns in `x` and `y`"
+    for c,x in enumerate(lst):
+      what= Skip if "?" in x else (Num if x[0].isupper() else Sym)
+      new = what(i.my,c,x)
+      i.cols += [new]
+      if "?" not in x:
+        what = i.y if ("+" in x or "-" in x or "!" in x) else i.x
+        what += [new]
  
-  def polarize(i,rows,d):
+  def load(i,file): 
+    "Creation: Load data from a csv file in a Data instance."
+    for lst in csv(file): i.row(lst)
+    return i
+
+  def mid(i):
+    "Query: report middle"
+    return [col.mid() for col in i.cols]
+
+  def polarize(i,rows):
     "Distance: Separate rows via their distance to two distant points."
     anywhere = random.choice(rows)
     _,north  = i.faraway(rows, anywhere)
@@ -180,22 +219,17 @@ class Sample(o):
     mid   = len(rows)//2
     return rows[:mid], rows[mid:]
 
-  def cluster(i):
-    "Distance: Divide `d.rows` into a tree of  `depth`."
-    out = []
-    def div(rows, depth):
-      if depth > i.my.depth  or len(rows) < i.my.end:
-        out.append(Cluster(rows))
-      else:
-        left, right  = i.polarize(rows,depth)
-        div(left,  depth + 1)
-        div(right, depth + 1)
-    div(i.rows, 1)
-    return out
+  def row(i,lst):
+    """Update: Turn `lst` into either a `header` (if it is row0) 
+    or a `row` (for every other  line)."""
+    lst = lst.cells if type(lst)==Row else lst
+    if i.cols: i.rows += [Row([c.add(c.prep(x)) for c,x in zip(i.cols,lst)],i)]
+    else: i.header(lst)
 
-class Cluster(o):
-  "Store divided rows"
-  def __init__(i,has): i.has = has
+  def ys(i):
+    "Query: report goals"
+    return [col.mid() for col in i.y]
+
 
 # def ranges(d):     
 #   for c in d.x:
@@ -204,25 +238,25 @@ class Cluster(o):
 #       d.ranges[c]= [closer(d,n,range1) for n,range1 in 
 #                     enumerate(ranges1(lst,col=col))]
 #
-# def ranges1(lst,col=0):
-#   "Break list  "
-#   lst     = sorted(lst, key=first)
-#   iota    = sd(lst, key=first) * .35
-#   big     = int( max(len(lst)/16, len(lst)**.5))
-#   lo      = x[0][0]
-#   range1  = o(col=col, lo=lo, hi=lo, has=[])
-#   out    += [range1]
-#   for i,(x,row) in enumerate(lst):
-#     if i < len(lst) - big:
-#       if len(range1.has) >= big:
-#          if range1.hi - range1.low > iota:
-#            if x != lst[i+1][0]:
-#              range1 = o(col=col, lo=x, hi=x, has=[])
-#              out += [range1]
-#     range1.hi   = x 
-#     range1.has += [row]
-#   return out
-#
+def discretize(lst,col=0):
+  "Break list  "
+  lst     = sorted(lst, key=first)
+  iota    = sd(lst, key=first) * .35
+  big     = int( max(len(lst)/16, len(lst)**.5))
+  lo      = x[0][0]
+  range1  = o(col=col, lo=lo, hi=lo, has=[])
+  out    += [range1]
+  for i,(x,row) in enumerate(lst):
+    if i < len(lst) - big:
+      if len(range1.has) >= big:
+         if range1.hi - range1.low > iota:
+           if x != lst[i+1][0]:
+             range1 = o(col=col, lo=x, hi=x, has=[])
+             out += [range1]
+    range1.hi   = x 
+    range1.has += [row]
+  return out
+
 # def dist(d, row1,row2):
 #    i1,i2 = id(row1), id(row2)
 #    if i1 > i2: i1,i2 = i2,i1

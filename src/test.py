@@ -4,10 +4,10 @@ from sinless import *
 from cli import cli
 
 class Eg:
-  crash = 0
+  crash = -1
+  def fails(my): assert 1/0
   def show(my): print(my)
   def works(my): assert True
-  def fails(my): assert 1/0
   def _noop(my):  return 1
   def sym(my):
     s=Sym()
@@ -22,18 +22,21 @@ class Eg:
     for _ in range(10000): n.add(int(100*r()))
     print(n.dist("?",20))
   def data(my):
-    d=Sample(my).load("weather.csv")
-    print(d.x[1])
+    s=Sample(my).load("../data/auto93.csv")
+    print(s.x[1])
+    print([(c.txt,c.w) for c in s.y])
   def dist(my):
-    d=Sample(my).load("auto93.csv")
-    for row1 in d.rows:
-      c,row2 = d.far(d.rows,row1)
+    s=Sample(my).load("../data/auto93.csv")
+    random.shuffle(s.rows)
+    for row1 in s.rows[:10]:
+      c,row2 = s.faraway(s.rows,row1)
       print("")
       print(row1.cells)
       print(row2.cells,int(100*c))
   def cluster(my):
-    d=Sample(my).load("auto93.csv")
-    d.cluster()
+    s=Sample(my).load("../data/auto93.csv")
+    for clus in sorted(s.cluster()):
+      print(clus.ys())
 
 def _main(todo=Eg._noop, egs={}):
   """(1) Update the config using any command-line settings.
