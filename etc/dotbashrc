@@ -44,7 +44,7 @@ mkdir -p $sinless21/docs
 
 doc() {
   (cd $sinless21/src
-  logo="https://github.com/timm/sinless/raw/main/etc/img/sinless.png"
+  logo="https://github.com/timm/sinless/raw/main/etc/img/sinless.jpeg"
   foot="Sinless v0.1 (c) 2021 Tim Menzies, unlicense.org. Share and enjoy."
   url="http://github.com/timm/sinless/blob/main/src/sinless"
   pdoc -e sinless=$url -t $sinless21/docs --logo $logo --footer-text "$foot" -o $sinless21/docs sinless.py
