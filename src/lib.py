@@ -19,4 +19,4 @@ class o:
   and which can hold methods."""
   def __init__(i, **d)  : i.__dict__.update(d)
   def __repr__(i) : return "{"+ ', '.join( 
-    [f":{k} {v}" for k, v in sorted(i.__dict__.items()) if  k[0] != "_"])+"}"
+    [f":{k} {v}" for k, v in i.__dict__.items() if  k[0] != "_"])+"}"
