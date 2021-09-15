@@ -1,6 +1,7 @@
 from types import FunctionType as fun
 import sys,traceback
 from sinless import *
+import discrete
 from cli import cli
 
 class Eg:
@@ -48,13 +49,13 @@ class Eg:
 
   def sample(my):
     "can i sample from disc?"
-    s=Sample(my).load("../data/auto93.csv")
+    s=Sample(my).load("../../data/auto93.csv")
     print(s.x[1])
     print([(c.txt,c.w) for c in s.y])
 
   def dist(my):
     "Looking for faraway things"
-    s=Sample(my).load("../data/auto93.csv")
+    s=Sample(my).load("../../data/auto93.csv")
     random.shuffle(s.rows)
     for row1 in s.rows[:10]:
       c,row2 = s.faraway(s.rows,row1)
@@ -64,11 +65,11 @@ class Eg:
 
   def cluster(my):
     "cluster stuff"
-    s=Sample(my).load("../data/auto93.csv")
+    s=Sample(my).load("../../data/auto93.csv")
     for clus in sorted(s.cluster()):
       print(clus.ys())
 
-  def _discrete(my,f="../data/auto93.csv"):
+  def _discrete(my,f="../../data/auto93.csv"):
     "distinguish good and bad clusters"
     s=Sample(my).load(f)
     clusters = sorted(s.cluster())
@@ -86,12 +87,12 @@ class Eg:
   def dcAuto93(my):
     "distinguish good and bad clusters"
     my.depth=6
-    Eg._discrete(my,"../data/auto93.csv")
+    Eg._discrete(my,"../../data/auto93.csv")
 
   def dcAuto2(my):
     "distinguish good and bad clusters"
     my.depth=5
-    Eg._discrete(my,"../data/auto2.csv")
+    Eg._discrete(my,"../../data/auto2.csv")
        
 def _main(todo=Eg._noop, egs={}):
   """(1) Update the config using any command-line settings.
