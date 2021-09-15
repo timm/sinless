@@ -1,7 +1,4 @@
-from types import FunctionType as fun
-import sys,traceback
 from sinless import *
-from cli import cli
 
 class Eg:
   crash = -1
@@ -93,35 +90,5 @@ class Eg:
     my.depth=5
     Eg._discrete(my,"../data/auto2.csv")
        
-def _main(todo=Eg._noop, egs={}):
-  """(1) Update the config using any command-line settings.
-  (2) Maybe, udpate  `todo` from the  command line."""    
-  my = o(**cli("python3 range.py [OPTIONS]"))
-  if my.Todo:
-    Eg.list(my)
-  else:
-    if my.todo == "all":
-      for k,f in egs.items():
-        if type(f) == fun and k[0] != "_":
-          _one(my, f)
-      print("Errors:",Eg.crash)
-    else:
-      _one(my, egs[my.todo] if my.todo else todo)
-  
-def _one(my, todo):
-  """(1) Initialize the random number seed.
-  (2) Call function `todo`, passing in the updated config."""
-  random.seed(my.seed)
-  w = sys.stderr.write
-  def _red(  msg): w(f"\x1b[1;31m✘ {msg}\x1b[0m\n")
-  def _green(msg): w(f"\x1b[1;32m✔ {msg}\x1b[0m\n")
-  try: 
-    todo(my)
-    _green(todo.__name__)
-  except Exception as err:
-    Eg.crash += 1
-    _red(todo.__name__)
-    if my.loud: print(traceback.format_exc())
-
-_main(egs=vars(Eg))
+main(Eg)
 sys.exit(Eg.crash)
