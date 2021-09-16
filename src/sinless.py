@@ -245,7 +245,7 @@ class Num(Distance,o):
 
   def norm(i,x): 
     "Query: return 0..1"
-    return (x-i.lo) / (i.hi - i.lo +1E-31)
+    return 0 if abs(i.hi - i.lo) < 1E-31 else (x-i.lo) / (i.hi - i.lo)
 
   def per(i,p=.5,lo=None,hi=None):
     "Query: Return the item that is `p-th` beteeen `lo` and `hi`"
@@ -281,7 +281,7 @@ class Row(o):
     s1, s2, n = 0, 0, len(i.sample.y)
     for col in i.sample.y:
       a   = col.norm(i.cells[col.at])
-      b   = col.norm(i.cells[col.at])
+      b   = col.norm(j.cells[col.at])
       s1 -= math.e**(col.w * (a - b) / n)
       s2 -= math.e**(col.w * (b - a) / n)
     return s1 / n < s2 / n
@@ -306,7 +306,7 @@ class Sample(o):
     return Sample(i.my, 
                   inits=[[col.txt for col in i.cols]]+inits)
 
-   def header(i,lst):
+  def header(i,lst):
     "Creation: Create columns. Store dependent and independent columns in `x` and `y`"
     for c,x in enumerate(lst):
       what= Skip if "?" in x else (Num if x[0].isupper() else Sym)
@@ -394,5 +394,3 @@ def main(eg):
       print("Errors:",eg.crash)
     else:
       do1(my, vars(eg)[my.todo] if my.todo else todo)
-  
-
