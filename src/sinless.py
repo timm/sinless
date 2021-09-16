@@ -166,7 +166,7 @@ class Skip(o):
   def mid(i):    return "?"
   def prep(i,x): return x
 
-class Sym(Distance, o):
+class Sym(Distance,Discretize,o):
   "Symbol counter."
   def __init__(i,my={},n=0,s=""): 
     "Creation"
@@ -201,7 +201,7 @@ class Sym(Distance, o):
     "Query: variability"
     return - sum(v/i.n * math.log2(v/i.n) for v in i.has.values())
 
-class Num(Distance,o):
+class Num(Distance,Discretize,o):
   """Column: Numeric counters. This is a reservoir sampler;
    i.e. after a fixed number of items, new items replace older ones,
    selected at random."""
@@ -290,7 +290,7 @@ class Row(o):
     "Query: the goal values of this row"
     return [i.cells[col.at] for col in i.sample.y]
 
-class Sample(o):
+class Sample(Distance,o):
   "Data: store rows and columns"
   def __init__(i,my, inits=[]): 
     "Creation"
@@ -364,25 +364,27 @@ def cli(usage, dict=CONFIG):
       add("-"+c, dest=k, default=False, help=help, action="store_true")
     else: # (1)
       add("-"+c, dest=k, default=default, help=help + " [" + str(default) + "]",
-           type=type(default), metavar=k)
+          type=type(default), metavar=k)
   return p.parse_args().__dict__
 
-def main(eg):
+crash = -1 
+def eg(f):
+  def worker(my):
+    global crash
+    random.seed(my.seed)
+    if my.todo == f.__name__:
+       try: 
+         f(my)
+         print(f"\x1b[1;32m✔ {f.__name__}\x1b[0m\n")
+       except Exception as err: 
+         crash += 1
+         print(f"\x1b[1;31m✘  {f.__name__}\x1b[0m\n")
+         if my.loud: print(traceback.format_exc())
+  return worker
+
+def main(funs):
   """(1) Update the config using any command-line settings.
   (2) Maybe, udpate  `todo` from the  command line."""    
-  def red(  s): sys.stderr.write(f"\x1b[1;31m✘ {s}\x1b[0m\n")
-  def green(s): sys.stderr.write(f"\x1b[1;32m✔ {s}\x1b[0m\n")
-  def do1(my, todo):
-    random.seed(my.seed)
-    try: 
-      todo(my)
-      green(todo.__name__)
-    except Exception as err: 
-      eg.crash += 1
-      red(todo.__name__)
-      if my.loud: print(traceback.format_exc())
-  #----------------------
-  todo = todo or eg._noop
   my = o(**cli("python3 range.py [OPTIONS]"))
   if my.Todo:
     eg.list(my)
