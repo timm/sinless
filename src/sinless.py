@@ -211,9 +211,12 @@ class Sample(o):
     out = []
     def div(rows, depth):
       if depth > i.my.depth  or len(rows) < i.my.end:
-        out.append(i.clone(rows))
+        leaf = i.clone(rows)
+        print('|.. ' * depth, f"n={len(rows)}\t   goals={leaf.ys()}")
+        out.append(leaf)
       else:
-        left, right  = i.polarize(rows)
+        left, right,c  = i.polarize(rows)
+        print('|.. ' * depth, f"n={len(rows)} c={int(100*c)/100}")
         div(left,  depth + 1)
         div(right, depth + 1)
     div(i.rows, 1)
@@ -262,7 +265,7 @@ class Sample(o):
       r.x = (i.dist(r,north)**2 + c**2 - i.dist(r,south)**2)/(2*c)
     rows  = sorted(rows, key=lambda row: row.x)
     mid   = len(rows)//2
-    return rows[:mid], rows[mid:]
+    return rows[:mid], rows[mid:],c
 
   def row(i,lst):
     """Update: Turn `lst` into either a `header` (if it is row0) 

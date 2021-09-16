@@ -35,7 +35,7 @@ alias grep='grep --color=auto'
 alias h="history"
 alias hello="git pull"
 alias ls="ls -G"
-alias tmux="tmux -f $sinless21/etc/dottmux "
+alias tmux="tmux -f $sinless21/etc/tmux-conf "
 alias vi="vim -u $sinless21/etc/vimrc "
 alias vims="vim +PluginInstall +qall"         
 alias pdoc="$HOME/Library/Python/3.8/bin/pdoc"

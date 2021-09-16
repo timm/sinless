@@ -66,8 +66,7 @@ class Eg:
     "cluster stuff"
     s=Sample(my).load("../data/auto93.csv")
     for clus in sorted(s.cluster()):
-      print(clus.ys())
-
+        print(clus.ys())
   def _discrete(my,f="../data/auto93.csv"):
     "distinguish good and bad clusters"
     s=Sample(my).load(f)
