@@ -22,6 +22,7 @@ but one who sins less and less frequently and gets up more and more quickly"
 
 """
 from types import FunctionType as fun
+from functools import wraps
 import re, sys, math, random, argparse, traceback
 fr = random.random
 
@@ -369,6 +370,7 @@ def cli(usage, dict=CONFIG):
 
 crash = -1 
 def eg(f):
+  @wraps(f)
   def worker(my):
     global crash
     random.seed(my.seed)
