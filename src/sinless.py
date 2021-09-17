@@ -1,30 +1,20 @@
 #!/usr/bin/env python3
 # vim: ts=2 sw=2 sts=2 et :
 """
-This code tries to cure the following AI sins:
-- AI tools, that require too much data, are hard to commission
-- AI tools, that cannot explain themselves, do not permit transparency and accountability
-- AI tools, that are needlessly complicated, waste CPU time and people time (and are hard to understand,
-  test, and extend)
-- AI tools, used off the shelf without tuning, are sub-optimal
-
-To that end, we try:
-- Use semi-supervised learning to reduce the commission costs (i.e. use fewer labels from the domain)
-- Use symbolic AI tools that generate rules describing regions where concusions hold.
-- Use epsilon domination to stop needlessly explore spurious details
-- Use all the above in Hyperparameter optimizers so you can optimize the tool.
-
-Does this solve all the problems of AI? Of course not.
-But at least its a start. And as
-St. Bernard of Clairvaux used to say:
-"A saint is not someone who never sins, 
-but one who sins less and less frequently and gets up more and more quickly"   
-
+Here are some AI sins, and their potential cure. If AI
+generated models are too complex to understand, using symbolic
+methods to find regions where conclusions hold. If the AI
+need too much data, use semi-supervised learning to reduce
+that commissioning cost. If the AI tools are needlessly
+complicated, use epsilon domination to stop needlessly explore
+spurious details. If the AI tools need tuning, use the above
+to tune the models.
 """
-from types import FunctionType as fun
+from copy      import deepcopy as kopy
+from types     import FunctionType as fun
 from functools import wraps
 import re, sys, math, random, argparse, traceback
-fr = random.random
+r = random.random
 
 CONFIG = dict(    
   bins = (float,.5,   "min bin size is n**bin"),    
@@ -45,121 +35,6 @@ class o:
   def __repr__(i) : return "{"+ ', '.join(
     [f":{k} {v}" for k, v in i.__dict__.items() if  k[0] != "_"])+"}"
 
-class Distance:
-  class Sym:
-    def dist(i,x,y):
-      "Distance: between two symbols"
-      return 1 if x=="?" and y=="?" else (0 if x==y else 1)
-
-  class Num:
-    def dist(i,x,y):
-      "Distance: between two numbers."
-      if x=="?" and y=="?": return 1
-      if x=="?": 
-        y = i.norm(y); x = 0 if y > 0.5 else 1
-      elif y=="?": 
-        x = i.norm(x); y = 0 if x > 0.5 else 1
-      else:
-        x,y = i.norm(x), i.norm(y)
-      return abs(x - y)
-
-  class Sample:
-    def cluster(i):
-      "Distance: Divide `d.rows` into a tree of  `depth`."
-      out = []
-      def div(rows, depth):
-        if depth > i.my.depth  or len(rows) < i.my.end:
-          out.append(i.clone(rows))
-        else:
-          left, right  = i.polarize(rows)
-          div(left,  depth + 1)
-          div(right, depth + 1)
-      div(i.rows, 1)
-      return out
-
-    def dist(i,r1,r2):
-        "Distance: between two rows"
-        d, n = 0, 1E-32
-        for col in i.x:
-          inc = col.dist( r1.cells[col.at], r2.cells[col.at] )
-          d  += inc**i.my.p
-          n  +=1
-        return (d/n)**(1/i.my.p)
-
-    def faraway(i, rows, r1):
-      "Distance: to a remove row"
-      random.shuffle(rows)
-      rows = sorted([(i.dist(r1,r2),r2) for r2 in rows[:128]], key=first)
-      return rows[int(i.my.far*len(rows))]
-
-    def polarize(i,rows):
-      "Distance: Separate rows via their distance to two distant points."
-      anywhere = random.choice(rows)
-      _,north  = i.faraway(rows, anywhere)
-      c,south  = i.faraway(rows, north)
-      for r in rows: 
-        r.x = (i.dist(r,north)**2 + c**2 - i.dist(r,south)**2)/(2*c)
-      rows  = sorted(rows, key=lambda row: row.x)
-      mid   = len(rows)//2
-      return rows[:mid], rows[mid:]
-
-class Discretize:
-  def unsuper(lst,big,iota):
-    """Discretization: divide lst into bins of at least size 
-    `big`, that span more than `iota`"""
-    lst  = sorted(lst, key=first)
-    x= lst[0][0]
-    now  = o(lo=x, hi=x, n=0, y=Sym())
-    all  = [now]
-    for i,(x,y) in enumerate(lst):
-      if i < len(lst) - big:
-        if now.n >= big:
-           if now.hi - now.lo > iota:
-             if x != lst[i+1][0]:
-               now = o(lo=x,hi=x,n=0,y=Sym())
-               all += [now]
-      now.n += 1
-      now.hi = x
-      now.y.add(y)
-    return all
-  
-  def merge(b4):
-    "Discretization: merge adjacent bins if they do not reduce the variability."
-    j,tmp = 0,[]
-    while j < len(b4):
-      a = b4[j]
-      if j < len(b4) - 1:
-        b = b4[j+1]
-        cy = a.y.merge(b.y)
-        if cy.var()*.95 <= (a.y.var()*a.n + b.y.var()*b.n)/(a.n + b.n):
-           a = o(lo=a.lo, hi=b.hi, n=a.n+b.n, y=cy)
-           j += 1
-      tmp += [a]
-      j += 1
-    return merge(tmp) if len(tmp) < len(b4) else b4
-
-  class Sym:
-    def discretize(i,j,_):
-      "Query: `Return values seen in  i` is good and `j` is bad"
-      for x in set(i.has | j.has): 
-        yield o(at=i.at, name=i.txt, lo=x, hi=x, 
-                best= i.has.get(x,0), rest=j.has.get(x,0))
-
-  class Num:
-    def discretize(i,j, my):
-      "Query: `Return values seen in  i` is good and `j` is bad"
-      best, rest = 1,0
-      xys=[(good,best) for good in i._all] + [
-           (bad, rest) for bad  in j._all]
-      n1,n2 = len(i._all), len(j._all)
-      iota = my.cohen * (i.var()*n1 + j.var()*n2) / (n1 + n2)
-      ranges = merge(unsuper(xys, len(xys)**my.bins, iota))
-      if len(ranges) > 1:
-        for r in ranges:
-          yield o(at=i.at, name=i.txt, lo=r.lo, hi=r.hi, 
-                  best= r.y.has.get(best,0), rest=r.y.has.get(rest,0))
-
- 
 class Skip(o):
   "Column: Make something that ignores everything it sees."
   def __init__(i,_,n=0,s=""): i.n,i.at,i.txt,i.w = 0,n,s,1
@@ -167,7 +42,7 @@ class Skip(o):
   def mid(i):    return "?"
   def prep(i,x): return x
 
-class Sym(Distance,Discretize,o):
+class Sym(o):
   "Symbol counter."
   def __init__(i,my={},n=0,s=""): 
     "Creation"
@@ -182,7 +57,17 @@ class Sym(Distance,Discretize,o):
       if new > i.most:
          i.most,i.mmode = new, x
     return x
-      
+
+  def discretize(i,j,_):
+    "Query: `Return values seen in  i` is good and `j` is bad"
+    for x in set(i.has | j.has): 
+      yield o(at=i.at, name=i.txt, lo=x, hi=x, 
+              best= i.has.get(x,0), rest=j.has.get(x,0))
+
+  def dist(i,x,y):
+    "Distance: between two symbols"
+    return 1 if x=="?" and y=="?" else (0 if x==y else 1)
+
   def merge(i,j):
     "Copy: merge two symbol counters"
     k = Sym(n=i.at, s=i.txt)
@@ -202,7 +87,7 @@ class Sym(Distance,Discretize,o):
     "Query: variability"
     return - sum(v/i.n * math.log2(v/i.n) for v in i.has.values())
 
-class Num(Distance,Discretize,o):
+class Num(o):
   """Column: Numeric counters. This is a reservoir sampler;
    i.e. after a fixed number of items, new items replace older ones,
    selected at random."""
@@ -232,6 +117,30 @@ class Num(Distance,Discretize,o):
     if i.old: i._all.sort()
     i.old = False
     return i._all
+
+  def discretize(i,j, my):
+    "Query: `Return values seen in  i` is good and `j` is bad"
+    best, rest = 1,0
+    xys=[(good,best) for good in i._all] + [
+         (bad, rest) for bad  in j._all]
+    n1,n2 = len(i._all), len(j._all)
+    iota = my.cohen * (i.var()*n1 + j.var()*n2) / (n1 + n2)
+    ranges = merge(unsuper(xys, len(xys)**my.bins, iota))
+    if len(ranges) > 1:
+      for r in ranges:
+        yield o(at=i.at, name=i.txt, lo=r.lo, hi=r.hi, 
+                best= r.y.has.get(best,0), rest=r.y.has.get(rest,0))
+
+  def dist(i,x,y):
+    "Distance: between two numbers."
+    if x=="?" and y=="?": return 1
+    if x=="?": 
+      y = i.norm(y); x = 0 if y > 0.5 else 1
+    elif y=="?": 
+      x = i.norm(x); y = 0 if x > 0.5 else 1
+    else:
+      x,y = i.norm(x), i.norm(y)
+    return abs(x - y)
 
   def mid(i):  
     "Query: mid point of the numbers."
@@ -272,6 +181,40 @@ class Num(Distance,Discretize,o):
     sort it and look at the 90th and 10th percentile. <br clear=all>"""
     return (i.per(.9) - i.per(.1)) / 2.56
 
+def unsuper(lst,big,iota):
+  """Discretization: divide lst into bins of at least size 
+  `big`, that span more than `iota`"""
+  lst  = sorted(lst, key=first)
+  x= lst[0][0]
+  now  = o(lo=x, hi=x, n=0, y=Sym())
+  all  = [now]
+  for i,(x,y) in enumerate(lst):
+    if i < len(lst) - big:
+      if now.n >= big:
+         if now.hi - now.lo > iota:
+           if x != lst[i+1][0]:
+             now = o(lo=x,hi=x,n=0,y=Sym())
+             all += [now]
+    now.n += 1
+    now.hi = x
+    now.y.add(y)
+  return all
+
+def merge(b4):
+  "Discretization: merge adjacent bins if they do not reduce the variability."
+  j,tmp = 0,[]
+  while j < len(b4):
+    a = b4[j]
+    if j < len(b4) - 1:
+      b = b4[j+1]
+      cy = a.y.merge(b.y)
+      if cy.var()*.95 <= (a.y.var()*a.n + b.y.var()*b.n)/(a.n + b.n):
+         a = o(lo=a.lo, hi=b.hi, n=a.n+b.n, y=cy)
+         j += 1
+    tmp += [a]
+    j += 1
+  return merge(tmp) if len(tmp) < len(b4) else b4
+
 class Row(o):
   "Data: store rows"
   def __init__(i,lst,sample): 
@@ -291,7 +234,7 @@ class Row(o):
     "Query: the goal values of this row"
     return [i.cells[col.at] for col in i.sample.y]
 
-class Sample(Distance,o):
+class Sample(o):
   "Data: store rows and columns"
   def __init__(i,my, inits=[]): 
     "Creation"
@@ -306,6 +249,34 @@ class Sample(Distance,o):
     "Copy: return a new sample with same structure as self"
     return Sample(i.my, 
                   inits=[[col.txt for col in i.cols]]+inits)
+
+  def cluster(i):
+    "Distance: Divide `d.rows` into a tree of  `depth`."
+    out = []
+    def div(rows, depth):
+      if depth > i.my.depth  or len(rows) < i.my.end:
+        out.append(i.clone(rows))
+      else:
+        left, right  = i.polarize(rows)
+        div(left,  depth + 1)
+        div(right, depth + 1)
+    div(i.rows, 1)
+    return out
+
+  def dist(i,r1,r2):
+      "Distance: between two rows"
+      d, n = 0, 1E-32
+      for col in i.x:
+        inc = col.dist( r1.cells[col.at], r2.cells[col.at] )
+        d  += inc**i.my.p
+        n  +=1
+      return (d/n)**(1/i.my.p)
+
+  def faraway(i, rows, r1):
+    "Distance: to a remove row"
+    random.shuffle(rows)
+    rows = sorted([(i.dist(r1,r2),r2) for r2 in rows[:128]], key=first)
+    return rows[int(i.my.far*len(rows))]
 
   def header(i,lst):
     "Creation: Create columns. Store dependent and independent columns in `x` and `y`"
@@ -325,12 +296,24 @@ class Sample(Distance,o):
   def mid(i):
     "Query: report middle"
     return [col.mid() for col in i.cols]
+
   def row(i,lst):
     """Update: Turn `lst` into either a `header` (if it is row0) 
     or a `row` (for every other  line)."""
     lst = lst.cells if type(lst)==Row else lst
     if i.cols: i.rows += [Row([c.add(c.prep(x)) for c,x in zip(i.cols,lst)],i)]
     else: i.header(lst)
+
+  def polarize(i,rows):
+    "Distance: Separate rows via their distance to two distant points."
+    anywhere = random.choice(rows)
+    _,north  = i.faraway(rows, anywhere)
+    c,south  = i.faraway(rows, north)
+    for r in rows: 
+      r.x = (i.dist(r,north)**2 + c**2 - i.dist(r,south)**2)/(2*c)
+    rows  = sorted(rows, key=lambda row: row.x)
+    mid   = len(rows)//2
+    return rows[:mid], rows[mid:]
 
   def ys(i):
     "Query: report goals"
@@ -347,54 +330,60 @@ def first(a):
   "First item" 
   return a[0]
 
-def cli(usage, dict=CONFIG):
-  """
-  (1) Execute a command-line parse that uses `dict` keys as  command line  flags
-      (so expect `dict` values to be tuples (type, defaultValue,help));   
-  (2) Define switches for  defaults that re `False`;    
-  (3) If keys repeat, make the  second one upper case."""
-  p    = argparse.ArgumentParser(prog=usage, description=__doc__, 
-                    formatter_class=argparse.RawTextHelpFormatter)
-  add  = p.add_argument
-  used = {}
-  for k, (ako, default, help) in sorted(dict.items()):
-    k0 = k[0]
-    k0 = k0.upper() if k0 in used else k0
-    c = used[k0] = k0  # (3)
-    if default == False: # (2)
-      add("-"+c, dest=k, default=False, help=help, action="store_true")
-    else: # (1)
-      add("-"+c, dest=k, default=default, help=help + " [" + str(default) + "]",
-          type=type(default), metavar=k)
-  return p.parse_args().__dict__
+class Eg:
+  all, crash = {}, -1
 
-crash = -1 
-def eg(f):
-  @wraps(f)
-  def worker(my):
-    global crash
+  def one(f): 
+    "Define one example."
+    if f.__name__[0] != "_": Eg.all[f.__name__] = f
+    return f
+
+  def cli(usage, dict=CONFIG):
+    """
+    (1) Execute a command-line parse that uses `dict` keys as  command line  flags
+        (so expect `dict` values to be tuples (type, defaultValue,help));   
+    (2) Define switches for  defaults that re `False`;    
+    (3) If keys repeat, make the  second one upper case."""
+    p    = argparse.ArgumentParser(prog=usage, description=__doc__, 
+                      formatter_class=argparse.RawTextHelpFormatter)
+    add  = p.add_argument
+    used = {}
+    for k, (ako, default, help) in sorted(dict.items()):
+      k0 = k[0]
+      k0 = k0.upper() if k0 in used else k0
+      c = used[k0] = k0  # (3)
+      if default == False: # (2)
+        add("-"+c, dest=k, default=False, help=help, action="store_true")
+      else: # (1)
+        add("-"+c, dest=k, default=default, help=help + " [" + str(default) + "]",
+            type=type(default), metavar=k)
+    return p.parse_args().__dict__
+
+  def run1(my, f):
+    """Set seed to a common standard. 
+    Run. Increment crash if crash."""
     random.seed(my.seed)
-    if my.todo == f.__name__:
-       try: 
-         f(my)
-         print(f"\x1b[1;32m✔ {f.__name__}\x1b[0m\n")
-       except Exception as err: 
-         crash += 1
-         print(f"\x1b[1;31m✘  {f.__name__}\x1b[0m\n")
-         if my.loud: print(traceback.format_exc())
-  return worker
-
-def main(funs):
-  """(1) Update the config using any command-line settings.
-  (2) Maybe, udpate  `todo` from the  command line."""    
-  my = o(**cli("python3 range.py [OPTIONS]"))
-  if my.Todo:
-    eg.list(my)
-  else:
+    try: 
+      f(my)
+      print(f"\x1b[1;32m✔ {f.__name__}\x1b[0m")
+    except Exception as err:
+      Eg.crash += 1
+      print(f"\x1b[1;31m✘  {f.__name__}\x1b[0m")
+      if my.loud: print(traceback.format_exc())
+  
+  def run():
+    """(1) Update the config using any command-line settings.
+       (2) Maybe, update `todo` from the  command line."""    
+    my = o(**Eg.cli("python3 range.py [OPTIONS]"))
+    if my.Todo: 
+      return [print(f"{name:>15} : {f.__doc__ or ''}") 
+              for name,f in Eg.all.items()]
     if my.todo == "all":
-      for k,f in vars(eg).items():
-        if type(f) == fun and k[0] != "_":
-          do1(my, f)
-      print("Errors:",eg.crash)
+      for _,f in Eg.all.items():
+        my = kopy(my)
+        Eg.run1(my,f)
+      print("Errors:", Eg.crash)
+      sys.exit(Eg.crash)
     else:
-      do1(my, vars(eg)[my.todo] if my.todo else todo)
+      if my.todo:
+        Eg.run1(my, Eg.all[my.todo])

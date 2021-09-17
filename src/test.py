@@ -1,17 +1,10 @@
 from sinless import *
+eg = Eg.one
 
 @eg  
 def fails(my): 
  "test if fails are caught"
  assert 1/0
-
-@eg
-def list(my):
-  "list all examples"
-  for s,f in vars(Eg).items():
-    if type(f) == fun:
-      if s[0] !="_":
-        print(f"  {s:>15} : {f.__doc__ or ''}")
 
 @eg
 def show(my): 
@@ -24,14 +17,9 @@ def works(my):
   assert True
 
 @eg
-def _noop(my):  
-  "do nothing"
-  return 1
-
-@eg
 def sym(my):
   "check symbol code"
-  s=Sym()
+  s = Sym()
   for x in "aaaabb": s.add(x)
   print(s.has)
 
@@ -40,7 +28,7 @@ def num(my):
   "check num"
   n=Num()
   for _ in range(10000): n.add(int(100*r()))
-  print(n.all())
+  print(n.all()[::20])
 
 @eg
 def numDist(my):
@@ -52,14 +40,14 @@ def numDist(my):
 @eg
 def sample(my):
   "can i sample from disc?"
-  s=Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("../data/auto93.csv")
   print(s.x[1])
   print([(c.txt,c.w) for c in s.y])
 
 @eg
 def dist(my):
   "Looking for faraway things"
-  s=Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("../data/auto93.csv")
   random.shuffle(s.rows)
   for row1 in s.rows[:10]:
     c,row2 = s.faraway(s.rows,row1)
@@ -70,14 +58,13 @@ def dist(my):
 @eg
 def cluster(my):
   "cluster stuff"
-  s=Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("../data/auto93.csv")
   for clus in sorted(s.cluster()):
     print(clus.ys())
 
-@eg
 def _discrete(my,f="../data/auto93.csv"):
   "distinguish good and bad clusters"
-  s=Sample(my).load(f)
+  s = Sample(my).load(f)
   clusters = sorted(s.cluster())
   worst, best = clusters[0], clusters[-1], 
   for good,bad in zip(best.x,worst.x):
@@ -93,14 +80,11 @@ def _discrete(my,f="../data/auto93.csv"):
 @eg
 def dcAuto93(my):
   "distinguish good and bad clusters"
-  my.depth=6
-  Eg._discrete(my,"../data/auto93.csv")
+  _discrete(my,"../data/auto93.csv")
 
 @eg
 def dcAuto2(my):
   "distinguish good and bad clusters"
-  my.depth=5
-  Eg._discrete(my,"../data/auto2.csv")
+  _discrete(my,"../data/auto2.csv")
      
-main(vars())
-sys.exit(crash)
+Eg.run()
