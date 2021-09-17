@@ -35,6 +35,7 @@ alias grep='grep --color=auto'
 alias h="history"
 alias hello="git pull"
 alias ls="ls -G"
+alias ok="python3.9 test.py "
 alias tmux="tmux -f $sinless21/etc/dottmux "
 alias vi="vim -u $sinless21/etc/vimrc "
 alias vims="vim +PluginInstall +qall"         
@@ -42,14 +43,17 @@ alias pdoc="$HOME/Library/Python/3.8/bin/pdoc"
 
 mkdir -p $sinless21/docs
 
-doc() {
+doc1() { _doc /Library/Frameworks/Python.framework/Versions/3.9/bin/pdoc; }
+
+_doc() {
+  pdoc=$1 
   (cd $sinless21/src
   logo="https://github.com/timm/sinless/raw/main/etc/img/sinless.png"
   foot="Sinless v0.1 (c) 2021 Tim Menzies, unlicense.org. Share and enjoy."
   url="http://github.com/timm/sinless/blob/main/src/sinless"
-  pdoc -e sinless=$url -t $sinless21/docs --logo $logo --footer-text "$foot" -o $sinless21/docs sinless.py
+  $pdoc -e sinless=$url  --logo $logo --footer-text "$foot" -o $sinless21/docs sinless.py
   mv $sinless21/docs/sinless.html $sinless21/docs/index.html
-  pdoc -e sinless=$url -t $sinless21/docs --logo $logo --footer-text "$foot"                   sinless.py)
+  $pdoc -e sinless=$url  --logo $logo --footer-text "$foot"                   sinless.py)
 }
 here() { cd $1; basename `pwd`; }
 

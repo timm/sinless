@@ -236,10 +236,11 @@ class Row(o):
 
 class Sample(o):
   "Data: store rows and columns"
-  def __init__(i,my, inits=[]): 
+  def __init__(i,my, inits=[],keep=True): 
     "Creation"
     i.cols, i.rows, i.x, i.y, i.my = [],[],[],[], my
     [i.row(init) for init in inits]
+    i.keep = keep
 
   def __lt__(i,j):
     "Sort tables by their mid values."
@@ -301,7 +302,10 @@ class Sample(o):
     """Update: Turn `lst` into either a `header` (if it is row0) 
     or a `row` (for every other  line)."""
     lst = lst.cells if type(lst)==Row else lst
-    if i.cols: i.rows += [Row([c.add(c.prep(x)) for c,x in zip(i.cols,lst)],i)]
+    if i.cols: 
+      row = [c.add(c.prep(x)) for c,x in zip(i.cols,lst)]
+      if i.keep:
+        i.rows += [Row(row,i)]
     else: i.header(lst)
 
   def polarize(i,rows):
@@ -338,7 +342,7 @@ class Eg:
     if f.__name__[0] != "_": Eg.all[f.__name__] = f
     return f
 
-  def cli(usage, dict=CONFIG):
+  def cli(usage,dict):
     """
     (1) Execute a command-line parse that uses `dict` keys as  command line  flags
         (so expect `dict` values to be tuples (type, defaultValue,help));   
@@ -374,7 +378,7 @@ class Eg:
   def run():
     """(1) Update the config using any command-line settings.
        (2) Maybe, update `todo` from the  command line."""    
-    my = o(**Eg.cli("python3 range.py [OPTIONS]"))
+    my = o(**Eg.cli("python3 range.py [OPTIONS]",CONFIG))
     if my.Todo: 
       return [print(f"{name:>15} : {f.__doc__ or ''}") 
               for name,f in Eg.all.items()]
