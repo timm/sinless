@@ -27,6 +27,7 @@ alias ..='cd ..'
 alias ...='cd ../../../'
 
 alias bye="gp; tmux detach"
+alias eg="python3.9 eg.py "
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias ful="bash $sinless21/ful "
@@ -35,7 +36,6 @@ alias grep='grep --color=auto'
 alias h="history"
 alias hello="git pull"
 alias ls="ls -G"
-alias ok="python3.9 test.py "
 alias tmux="tmux -f $sinless21/etc/dottmux "
 alias vi="vim -u $sinless21/etc/vimrc "
 alias vims="vim +PluginInstall +qall"         

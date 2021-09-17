@@ -27,7 +27,9 @@ CONFIG = dict(
   p    = (int,  2,    "co-efficient on distance equation"),    
   seed = (int,  256,  "random number seed"),      
   todo = (str,  "",   "todo: function (to be run at start-up)"),     
-  Todo = (str, False, "list available items for -t"))     
+  Todo = (str, False, "list available items for -t"),
+  verbose=(str,False, "enable verbose prints")
+)     
 
 class o:
   "Return a class can print itself (hiding 'private' keys)"
@@ -236,11 +238,11 @@ class Row(o):
 
 class Sample(o):
   "Data: store rows and columns"
-  def __init__(i,my, inits=[],keep=True): 
+  def __init__(i,my, inits=[], keep=True): 
     "Creation"
     i.cols, i.rows, i.x, i.y, i.my = [],[],[],[], my
-    [i.row(init) for init in inits]
     i.keep = keep
+    [i.row(init) for init in inits]
 
   def __lt__(i,j):
     "Sort tables by their mid values."
@@ -255,6 +257,8 @@ class Sample(o):
     "Distance: Divide `d.rows` into a tree of  `depth`."
     out = []
     def div(rows, depth):
+      if i.my.verbose:
+        print('|.. '*(depth-1) + str(len(rows)))
       if depth > i.my.depth  or len(rows) < i.my.end:
         out.append(i.clone(rows))
       else:
