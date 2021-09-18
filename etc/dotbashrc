@@ -44,6 +44,7 @@ alias pdoc="$HOME/Library/Python/3.8/bin/pdoc"
 mkdir -p $sinless21/docs
 
 doc1() { _doc /Library/Frameworks/Python.framework/Versions/3.9/bin/pdoc; }
+doc2() { _doc /usr/local/bin/pdoc; }
 
 _doc() {
   pdoc=$1 

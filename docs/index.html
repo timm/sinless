@@ -121,12 +121,6 @@
 
             </li>
             <li>
-                    <a class="function" href="#unsuper">unsuper</a>
-            </li>
-            <li>
-                    <a class="function" href="#merge">merge</a>
-            </li>
-            <li>
                     <a class="class" href="#Row">Row</a>
                             <ul class="memberlist">
                         <li>
@@ -145,6 +139,9 @@
                                 <a class="function" href="#Sample.__init__">Sample</a>
                         </li>
                         <li>
+                                <a class="function" href="#Sample.add">add</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Sample.clone">clone</a>
                         </li>
                         <li>
@@ -154,22 +151,10 @@
                                 <a class="function" href="#Sample.dist">dist</a>
                         </li>
                         <li>
-                                <a class="function" href="#Sample.faraway">faraway</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Sample.header">header</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Sample.load">load</a>
                         </li>
                         <li>
                                 <a class="function" href="#Sample.mid">mid</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Sample.row">row</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Sample.polarize">polarize</a>
                         </li>
                         <li>
                                 <a class="function" href="#Sample.ys">ys</a>
@@ -259,11 +244,11 @@ to tune the models.</p>
 <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span>
 
 <span class="n">CONFIG</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>    
-  <span class="n">bins</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span>   <span class="s2">&quot;min bin size is n**bin&quot;</span><span class="p">),</span>    
-  <span class="n">cohen</span><span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="o">.</span><span class="mi">35</span><span class="p">,</span>  <span class="s2">&quot;ignore differences less than cohen*sd&quot;</span><span class="p">),</span>    
+  <span class="n">bins</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="mf">.5</span><span class="p">,</span>   <span class="s2">&quot;min bin size is n**bin&quot;</span><span class="p">),</span>    
+  <span class="n">cohen</span><span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="mf">.35</span><span class="p">,</span>  <span class="s2">&quot;ignore differences less than cohen*sd&quot;</span><span class="p">),</span>    
   <span class="n">depth</span><span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>    <span class="s2">&quot;dendogram depth&quot;</span><span class="p">),</span>     
   <span class="n">end</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>    <span class="s2">&quot;stopping criteria&quot;</span><span class="p">),</span>    
-  <span class="n">far</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="o">.</span><span class="mi">9</span><span class="p">,</span>   <span class="s2">&quot;where to find far samples&quot;</span><span class="p">),</span>      
+  <span class="n">far</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="mf">.9</span><span class="p">,</span>   <span class="s2">&quot;where to find far samples&quot;</span><span class="p">),</span>      
   <span class="n">loud</span> <span class="o">=</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span><span class="s2">&quot;loud mode: print stacktrace on error&quot;</span><span class="p">),</span>    
   <span class="nb">max</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span>  <span class="mi">500</span><span class="p">,</span>  <span class="s2">&quot;max samples held  by `Nums`&quot;</span><span class="p">),</span>     
   <span class="n">p</span>    <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>    <span class="s2">&quot;co-efficient on distance equation&quot;</span><span class="p">),</span>    
@@ -362,8 +347,42 @@ to tune the models.</p>
     <span class="n">i</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">_all</span>
 
-  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
     <span class="s2">&quot;Query: `Return values seen in  i` is good and `j` is bad&quot;</span>
+    <span class="k">def</span> <span class="nf">unsuper</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">big</span><span class="p">,</span><span class="n">iota</span><span class="p">):</span>
+      <span class="s2">&quot;split itno bins of at least size `big`, that span more than `iota`&quot;</span>
+      <span class="n">lst</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
+      <span class="n">x</span><span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">now</span>  <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+      <span class="nb">all</span>  <span class="o">=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">big</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">big</span><span class="p">:</span>
+             <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">now</span><span class="o">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">iota</span><span class="p">:</span>
+               <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                 <span class="n">now</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+                 <span class="nb">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nb">all</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+      <span class="s2">&quot;merge adjacent bins if they do not reduce the variability.&quot;</span>
+      <span class="n">j</span><span class="p">,</span><span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,[]</span>
+      <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+          <span class="n">cy</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">cy</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="mf">.95</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+             <span class="n">a</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">cy</span><span class="p">)</span>
+             <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">tmp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="k">else</span> <span class="n">b4</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="o">=</span> <span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span>
     <span class="n">best</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
     <span class="n">xys</span><span class="o">=</span><span class="p">[(</span><span class="n">good</span><span class="p">,</span><span class="n">best</span><span class="p">)</span> <span class="k">for</span> <span class="n">good</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
          <span class="p">(</span><span class="n">bad</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span> <span class="k">for</span> <span class="n">bad</span>  <span class="ow">in</span> <span class="n">j</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span>
@@ -401,7 +420,7 @@ to tune the models.</p>
     <span class="s2">&quot;Query: return 0..1&quot;</span>
     <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-31</span> <span class="k">else</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Query: Return the item that is `p-th` beteeen `lo` and `hi`&quot;</span>
     <span class="n">a</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
     <span class="n">lo</span> <span class="o">=</span> <span class="n">lo</span> <span class="ow">or</span> <span class="mi">0</span>
@@ -423,41 +442,7 @@ to tune the models.</p>
 <span class="sd">    deviation is 90% of the mass divided by (1.28*2)=2.56. Hence,</span>
 <span class="sd">    to compute something analogous to sd from any distribution, </span>
 <span class="sd">    sort it and look at the 90th and 10th percentile. &lt;br clear=all&gt;&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
-
-<span class="k">def</span> <span class="nf">unsuper</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">big</span><span class="p">,</span><span class="n">iota</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Discretization: divide lst into bins of at least size </span>
-<span class="sd">  `big`, that span more than `iota`&quot;&quot;&quot;</span>
-  <span class="n">lst</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
-  <span class="n">x</span><span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-  <span class="n">now</span>  <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
-  <span class="nb">all</span>  <span class="o">=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
-  <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">big</span><span class="p">:</span>
-      <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">big</span><span class="p">:</span>
-         <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">now</span><span class="o">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">iota</span><span class="p">:</span>
-           <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
-             <span class="n">now</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
-             <span class="nb">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nb">all</span>
-
-<span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
-  <span class="s2">&quot;Discretization: merge adjacent bins if they do not reduce the variability.&quot;</span>
-  <span class="n">j</span><span class="p">,</span><span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,[]</span>
-  <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-      <span class="n">b</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-      <span class="n">cy</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">cy</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*.</span><span class="mi">95</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-         <span class="n">a</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">cy</span><span class="p">)</span>
-         <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">tmp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
-    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-  <span class="k">return</span> <span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="k">else</span> <span class="n">b4</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
 
 <span class="k">class</span> <span class="nc">Row</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
   <span class="s2">&quot;Data: store rows&quot;</span>
@@ -484,30 +469,67 @@ to tune the models.</p>
     <span class="s2">&quot;Creation&quot;</span>
     <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="p">[],[],[],[],</span> <span class="n">my</span>
     <span class="n">i</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span>
-    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
     <span class="s2">&quot;Sort tables by their mid values.&quot;</span>
     <span class="k">return</span>  <span class="n">Row</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">mid</span><span class="p">(),</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Row</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">mid</span><span class="p">(),</span> <span class="n">j</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
+<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">))(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span> 
+          <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
+      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[]):</span>
     <span class="s2">&quot;Copy: return a new sample with same structure as self&quot;</span>
     <span class="k">return</span> <span class="n">Sample</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span> 
                   <span class="n">inits</span><span class="o">=</span><span class="p">[[</span><span class="n">col</span><span class="o">.</span><span class="n">txt</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">]]</span><span class="o">+</span><span class="n">inits</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Distance: Divide `d.rows` into a tree of  `depth`.&quot;</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">far</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;From `n` random rows, return the `i.my.far*n`-th row from `r1`&quot;</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+      <span class="k">return</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">n</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="n">n</span><span class="p">)]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;Return rows seperated by two far points.&quot;</span>
+      <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">anywhere</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">north</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">x</span>        <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
+        <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">),</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">))</span>  
+      <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+      <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarizing</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+      <span class="s2">&quot;Cluster via recursive polarizing the data.&quot;</span>
       <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;|.. &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">depth</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)))</span>
       <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">depth</span>  <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
       <span class="k">else</span><span class="p">:</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">div</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">polarizing</span><span class="p">(</span><span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span>
 
   <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">):</span>
@@ -519,51 +541,14 @@ to tune the models.</p>
         <span class="n">n</span>  <span class="o">+=</span><span class="mi">1</span>
       <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">faraway</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">r1</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: to a remove row&quot;</span>
-    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[:</span><span class="mi">128</span><span class="p">]],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))]</span>
-
-  <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="s2">&quot;Creation: Create columns. Store dependent and independent columns in `x` and `y`&quot;</span>
-    <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-      <span class="n">what</span><span class="o">=</span> <span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">)</span>
-      <span class="n">new</span> <span class="o">=</span> <span class="n">what</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-      <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
-      <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
-        <span class="n">what</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span>
-        <span class="n">what</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
- 
   <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">file</span><span class="p">):</span> 
     <span class="s2">&quot;Creation: Load data from a csv file in a Data instance.&quot;</span>
-    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">i</span>
 
   <span class="k">def</span> <span class="nf">mid</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
     <span class="s2">&quot;Query: report middle&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">mid</span><span class="p">()</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
-
-  <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
-<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
-    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
-    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
-      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
-      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
-        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: Separate rows via their distance to two distant points.&quot;</span>
-    <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">anywhere</span><span class="p">)</span>
-    <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">north</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
-      <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
-    <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
 
   <span class="k">def</span> <span class="nf">ys</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
     <span class="s2">&quot;Query: report goals&quot;</span>
@@ -1073,8 +1058,42 @@ to tune the models.</p>
     <span class="n">i</span><span class="o">.</span><span class="n">old</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">_all</span>
 
-  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
     <span class="s2">&quot;Query: `Return values seen in  i` is good and `j` is bad&quot;</span>
+    <span class="k">def</span> <span class="nf">unsuper</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">big</span><span class="p">,</span><span class="n">iota</span><span class="p">):</span>
+      <span class="s2">&quot;split itno bins of at least size `big`, that span more than `iota`&quot;</span>
+      <span class="n">lst</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
+      <span class="n">x</span><span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">now</span>  <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+      <span class="nb">all</span>  <span class="o">=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">big</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">big</span><span class="p">:</span>
+             <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">now</span><span class="o">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">iota</span><span class="p">:</span>
+               <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                 <span class="n">now</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+                 <span class="nb">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nb">all</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+      <span class="s2">&quot;merge adjacent bins if they do not reduce the variability.&quot;</span>
+      <span class="n">j</span><span class="p">,</span><span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,[]</span>
+      <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+          <span class="n">cy</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">cy</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="mf">.95</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+             <span class="n">a</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">cy</span><span class="p">)</span>
+             <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">tmp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="k">else</span> <span class="n">b4</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="o">=</span> <span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span>
     <span class="n">best</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
     <span class="n">xys</span><span class="o">=</span><span class="p">[(</span><span class="n">good</span><span class="p">,</span><span class="n">best</span><span class="p">)</span> <span class="k">for</span> <span class="n">good</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
          <span class="p">(</span><span class="n">bad</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span> <span class="k">for</span> <span class="n">bad</span>  <span class="ow">in</span> <span class="n">j</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span>
@@ -1112,7 +1131,7 @@ to tune the models.</p>
     <span class="s2">&quot;Query: return 0..1&quot;</span>
     <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1E-31</span> <span class="k">else</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Query: Return the item that is `p-th` beteeen `lo` and `hi`&quot;</span>
     <span class="n">a</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
     <span class="n">lo</span> <span class="o">=</span> <span class="n">lo</span> <span class="ow">or</span> <span class="mi">0</span>
@@ -1134,7 +1153,7 @@ to tune the models.</p>
 <span class="sd">    deviation is 90% of the mass divided by (1.28*2)=2.56. Hence,</span>
 <span class="sd">    to compute something analogous to sd from any distribution, </span>
 <span class="sd">    sort it and look at the 90th and 10th percentile. &lt;br clear=all&gt;&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
 </pre></div>
 
         </details>
@@ -1231,13 +1250,47 @@ well as the <code>lo</code> and <code>hi</code>  value  seen so far.</p>
 
         
             <span class="def">def</span>
-            <span class="name">discretize</span><span class="signature">(i, j, my)</span>:
+            <span class="name">discretize</span><span class="signature">(columnFromHere, sameColumnFromThere, my)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
     <span class="s2">&quot;Query: `Return values seen in  i` is good and `j` is bad&quot;</span>
+    <span class="k">def</span> <span class="nf">unsuper</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">big</span><span class="p">,</span><span class="n">iota</span><span class="p">):</span>
+      <span class="s2">&quot;split itno bins of at least size `big`, that span more than `iota`&quot;</span>
+      <span class="n">lst</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
+      <span class="n">x</span><span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">now</span>  <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+      <span class="nb">all</span>  <span class="o">=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">big</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">big</span><span class="p">:</span>
+             <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">now</span><span class="o">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">iota</span><span class="p">:</span>
+               <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                 <span class="n">now</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
+                 <span class="nb">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">now</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nb">all</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+      <span class="s2">&quot;merge adjacent bins if they do not reduce the variability.&quot;</span>
+      <span class="n">j</span><span class="p">,</span><span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,[]</span>
+      <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+          <span class="n">b</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+          <span class="n">cy</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">cy</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="mf">.95</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+             <span class="n">a</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">cy</span><span class="p">)</span>
+             <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">tmp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="k">else</span> <span class="n">b4</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="o">=</span> <span class="n">columnFromHere</span><span class="p">,</span> <span class="n">sameColumnFromThere</span>
     <span class="n">best</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
     <span class="n">xys</span><span class="o">=</span><span class="p">[(</span><span class="n">good</span><span class="p">,</span><span class="n">best</span><span class="p">)</span> <span class="k">for</span> <span class="n">good</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
          <span class="p">(</span><span class="n">bad</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span> <span class="k">for</span> <span class="n">bad</span>  <span class="ow">in</span> <span class="n">j</span><span class="o">.</span><span class="n">_all</span><span class="p">]</span>
@@ -1365,7 +1418,7 @@ well as the <code>lo</code> and <code>hi</code>  value  seen so far.</p>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">per</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Query: Return the item that is `p-th` beteeen `lo` and `hi`&quot;</span>
     <span class="n">a</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
     <span class="n">lo</span> <span class="o">=</span> <span class="n">lo</span> <span class="ow">or</span> <span class="mi">0</span>
@@ -1423,7 +1476,7 @@ well as the <code>lo</code> and <code>hi</code>  value  seen so far.</p>
 <span class="sd">    deviation is 90% of the mass divided by (1.28*2)=2.56. Hence,</span>
 <span class="sd">    to compute something analogous to sd from any distribution, </span>
 <span class="sd">    sort it and look at the 90th and 10th percentile. &lt;br clear=all&gt;&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.9</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">per</span><span class="p">(</span><span class="mf">.1</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.56</span>
 </pre></div>
 
         </details>
@@ -1441,77 +1494,6 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
 
 
                             </div>
-                </section>
-                <section id="unsuper">
-                            <div class="attr function"><a class="headerlink" href="#unsuper">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">unsuper</span><span class="signature">(lst, big, iota)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">unsuper</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">big</span><span class="p">,</span><span class="n">iota</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Discretization: divide lst into bins of at least size </span>
-<span class="sd">  `big`, that span more than `iota`&quot;&quot;&quot;</span>
-  <span class="n">lst</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
-  <span class="n">x</span><span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-  <span class="n">now</span>  <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
-  <span class="nb">all</span>  <span class="o">=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
-  <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">big</span><span class="p">:</span>
-      <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">big</span><span class="p">:</span>
-         <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">now</span><span class="o">.</span><span class="n">lo</span> <span class="o">&gt;</span> <span class="n">iota</span><span class="p">:</span>
-           <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
-             <span class="n">now</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Sym</span><span class="p">())</span>
-             <span class="nb">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">now</span><span class="p">]</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span>
-    <span class="n">now</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-  <span class="k">return</span> <span class="nb">all</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Discretization: divide lst into bins of at least size 
-<code>big</code>, that span more than <code>iota</code></p>
-</div>
-
-
-                </section>
-                <section id="merge">
-                            <div class="attr function"><a class="headerlink" href="#merge">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">merge</span><span class="signature">(b4)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
-  <span class="s2">&quot;Discretization: merge adjacent bins if they do not reduce the variability.&quot;</span>
-  <span class="n">j</span><span class="p">,</span><span class="n">tmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,[]</span>
-  <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-      <span class="n">b</span> <span class="o">=</span> <span class="n">b4</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-      <span class="n">cy</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">cy</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*.</span><span class="mi">95</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-         <span class="n">a</span> <span class="o">=</span> <span class="n">o</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">b</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">n</span><span class="o">+</span><span class="n">b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">cy</span><span class="p">)</span>
-         <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">tmp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
-    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-  <span class="k">return</span> <span class="n">merge</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span> <span class="k">else</span> <span class="n">b4</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Discretization: merge adjacent bins if they do not reduce the variability.</p>
-</div>
-
-
                 </section>
                 <section id="Row">
                                 <div class="attr class">
@@ -1608,30 +1590,67 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
     <span class="s2">&quot;Creation&quot;</span>
     <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="p">[],[],[],[],</span> <span class="n">my</span>
     <span class="n">i</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span>
-    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
 
   <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
     <span class="s2">&quot;Sort tables by their mid values.&quot;</span>
     <span class="k">return</span>  <span class="n">Row</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">mid</span><span class="p">(),</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Row</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">mid</span><span class="p">(),</span> <span class="n">j</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
+<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">))(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span> 
+          <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
+      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[]):</span>
     <span class="s2">&quot;Copy: return a new sample with same structure as self&quot;</span>
     <span class="k">return</span> <span class="n">Sample</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span> 
                   <span class="n">inits</span><span class="o">=</span><span class="p">[[</span><span class="n">col</span><span class="o">.</span><span class="n">txt</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">]]</span><span class="o">+</span><span class="n">inits</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Distance: Divide `d.rows` into a tree of  `depth`.&quot;</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">far</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;From `n` random rows, return the `i.my.far*n`-th row from `r1`&quot;</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+      <span class="k">return</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">n</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="n">n</span><span class="p">)]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;Return rows seperated by two far points.&quot;</span>
+      <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">anywhere</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">north</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">x</span>        <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
+        <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">),</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">))</span>  
+      <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+      <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarizing</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+      <span class="s2">&quot;Cluster via recursive polarizing the data.&quot;</span>
       <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;|.. &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">depth</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)))</span>
       <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">depth</span>  <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
       <span class="k">else</span><span class="p">:</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">div</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">polarizing</span><span class="p">(</span><span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span>
 
   <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">):</span>
@@ -1643,51 +1662,14 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
         <span class="n">n</span>  <span class="o">+=</span><span class="mi">1</span>
       <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
 
-  <span class="k">def</span> <span class="nf">faraway</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">r1</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: to a remove row&quot;</span>
-    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[:</span><span class="mi">128</span><span class="p">]],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))]</span>
-
-  <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="s2">&quot;Creation: Create columns. Store dependent and independent columns in `x` and `y`&quot;</span>
-    <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-      <span class="n">what</span><span class="o">=</span> <span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">)</span>
-      <span class="n">new</span> <span class="o">=</span> <span class="n">what</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-      <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
-      <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
-        <span class="n">what</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span>
-        <span class="n">what</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
- 
   <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">file</span><span class="p">):</span> 
     <span class="s2">&quot;Creation: Load data from a csv file in a Data instance.&quot;</span>
-    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">i</span>
 
   <span class="k">def</span> <span class="nf">mid</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
     <span class="s2">&quot;Query: report middle&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">mid</span><span class="p">()</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
-
-  <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
-<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
-    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
-    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
-      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
-      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
-        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: Separate rows via their distance to two distant points.&quot;</span>
-    <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">anywhere</span><span class="p">)</span>
-    <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">north</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
-      <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
-    <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
 
   <span class="k">def</span> <span class="nf">ys</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
     <span class="s2">&quot;Query: report goals&quot;</span>
@@ -1713,12 +1695,48 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
     <span class="s2">&quot;Creation&quot;</span>
     <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="p">[],[],[],[],</span> <span class="n">my</span>
     <span class="n">i</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span>
-    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="k">for</span> <span class="n">init</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
 </pre></div>
 
         </details>
 
             <div class="docstring"><p>Creation</p>
+</div>
+
+
+                            </div>
+                            <div id="Sample.add" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#Sample.add">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">add</span><span class="signature">(i, lst)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
+<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">))(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span> 
+          <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
+      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Update: Turn <code>lst</code> into either a <code>header</code> (if it is row0) 
+or a <code>row</code> (for every other  line).</p>
 </div>
 
 
@@ -1751,24 +1769,44 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
 
         
             <span class="def">def</span>
-            <span class="name">cluster</span><span class="signature">(i)</span>:
+            <span class="name">cluster</span><span class="signature">(i, rows=None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="s2">&quot;Distance: Divide `d.rows` into a tree of  `depth`.&quot;</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">far</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;From `n` random rows, return the `i.my.far*n`-th row from `r1`&quot;</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+      <span class="k">return</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">n</span><span class="p">)],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="n">n</span><span class="p">)]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+      <span class="s2">&quot;Return rows seperated by two far points.&quot;</span>
+      <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">anywhere</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">far</span><span class="p">(</span><span class="n">north</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+      <span class="n">x</span>        <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
+        <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">),</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">))</span>  
+      <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+      <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="k">def</span> <span class="nf">polarizing</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+      <span class="s2">&quot;Cluster via recursive polarizing the data.&quot;</span>
       <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;|.. &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">depth</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)))</span>
       <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">depth</span>  <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
       <span class="k">else</span><span class="p">:</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">div</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">div</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span>  <span class="o">=</span> <span class="n">polarize</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">left</span><span class="p">,</span>  <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">polarizing</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#-------------------------------</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">polarizing</span><span class="p">(</span><span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span>
 </pre></div>
 
@@ -1806,58 +1844,6 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
 
 
                             </div>
-                            <div id="Sample.faraway" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Sample.faraway">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">faraway</span><span class="signature">(i, rows, r1)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">faraway</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">r1</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: to a remove row&quot;</span>
-    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">r2</span><span class="p">),</span><span class="n">r2</span><span class="p">)</span> <span class="k">for</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[:</span><span class="mi">128</span><span class="p">]],</span> <span class="n">key</span><span class="o">=</span><span class="n">first</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">far</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))]</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Distance: to a remove row</p>
-</div>
-
-
-                            </div>
-                            <div id="Sample.header" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Sample.header">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">header</span><span class="signature">(i, lst)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="s2">&quot;Creation: Create columns. Store dependent and independent columns in `x` and `y`&quot;</span>
-    <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-      <span class="n">what</span><span class="o">=</span> <span class="n">Skip</span> <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">else</span> <span class="p">(</span><span class="n">Num</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">Sym</span><span class="p">)</span>
-      <span class="n">new</span> <span class="o">=</span> <span class="n">what</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-      <span class="n">i</span><span class="o">.</span><span class="n">cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
-      <span class="k">if</span> <span class="s2">&quot;?&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
-        <span class="n">what</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;!&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">x</span>
-        <span class="n">what</span> <span class="o">+=</span> <span class="p">[</span><span class="n">new</span><span class="p">]</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Creation: Create columns. Store dependent and independent columns in <code>x</code> and <code>y</code></p>
-</div>
-
-
-                            </div>
                             <div id="Sample.load" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#Sample.load">#&nbsp;&nbsp</a>
 
@@ -1870,7 +1856,7 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">file</span><span class="p">):</span> 
     <span class="s2">&quot;Creation: Load data from a csv file in a Data instance.&quot;</span>
-    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">i</span>
 </pre></div>
 
@@ -1899,64 +1885,6 @@ sort it and look at the 90th and 10th percentile. <br clear=all></p>
         </details>
 
             <div class="docstring"><p>Query: report middle</p>
-</div>
-
-
-                            </div>
-                            <div id="Sample.row" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Sample.row">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">row</span><span class="signature">(i, lst)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">row</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update: Turn `lst` into either a `header` (if it is row0) </span>
-<span class="sd">    or a `row` (for every other  line).&quot;&quot;&quot;</span>
-    <span class="n">lst</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">cells</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">==</span><span class="n">Row</span> <span class="k">else</span> <span class="n">lst</span>
-    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span> 
-      <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prep</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span><span class="n">lst</span><span class="p">)]</span>
-      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">keep</span><span class="p">:</span>
-        <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Update: Turn <code>lst</code> into either a <code><a href="#Sample.header">header</a></code> (if it is row0) 
-or a <code><a href="#Sample.row">row</a></code> (for every other  line).</p>
-</div>
-
-
-                            </div>
-                            <div id="Sample.polarize" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#Sample.polarize">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">polarize</span><span class="signature">(i, rows)</span>:
-    </div>
-
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>  <span class="k">def</span> <span class="nf">polarize</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">rows</span><span class="p">):</span>
-    <span class="s2">&quot;Distance: Separate rows via their distance to two distant points.&quot;</span>
-    <span class="n">anywhere</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span><span class="n">north</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">anywhere</span><span class="p">)</span>
-    <span class="n">c</span><span class="p">,</span><span class="n">south</span>  <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">faraway</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">north</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span> 
-      <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">north</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">south</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">c</span><span class="p">)</span>
-    <span class="n">rows</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">mid</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
-    <span class="k">return</span> <span class="n">rows</span><span class="p">[:</span><span class="n">mid</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="n">mid</span><span class="p">:]</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Distance: Separate rows via their distance to two distant points.</p>
 </div>
 
 

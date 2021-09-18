@@ -120,8 +120,42 @@ class Num(o):
     i.old = False
     return i._all
 
-  def discretize(i,j, my):
+  def discretize(columnFromHere, sameColumnFromThere, my):
     "Query: `Return values seen in  i` is good and `j` is bad"
+    def unsuper(lst,big,iota):
+      "split itno bins of at least size `big`, that span more than `iota`"
+      lst  = sorted(lst, key=first)
+      x= lst[0][0]
+      now  = o(lo=x, hi=x, n=0, y=Sym())
+      all  = [now]
+      for i,(x,y) in enumerate(lst):
+        if i < len(lst) - big:
+          if now.n >= big:
+             if now.hi - now.lo > iota:
+               if x != lst[i+1][0]:
+                 now = o(lo=x,hi=x,n=0,y=Sym())
+                 all += [now]
+        now.n += 1
+        now.hi = x
+        now.y.add(y)
+      return all
+    #--------------------------------
+    def merge(b4):
+      "merge adjacent bins if they do not reduce the variability."
+      j,tmp = 0,[]
+      while j < len(b4):
+        a = b4[j]
+        if j < len(b4) - 1:
+          b = b4[j+1]
+          cy = a.y.merge(b.y)
+          if cy.var()*.95 <= (a.y.var()*a.n + b.y.var()*b.n)/(a.n + b.n):
+             a = o(lo=a.lo, hi=b.hi, n=a.n+b.n, y=cy)
+             j += 1
+        tmp += [a]
+        j += 1
+      return merge(tmp) if len(tmp) < len(b4) else b4
+    #--------------------------------
+    i,j = columnFromHere, sameColumnFromThere
     best, rest = 1,0
     xys=[(good,best) for good in i._all] + [
          (bad, rest) for bad  in j._all]
@@ -183,40 +217,6 @@ class Num(o):
     sort it and look at the 90th and 10th percentile. <br clear=all>"""
     return (i.per(.9) - i.per(.1)) / 2.56
 
-def unsuper(lst,big,iota):
-  """Discretization: divide lst into bins of at least size 
-  `big`, that span more than `iota`"""
-  lst  = sorted(lst, key=first)
-  x= lst[0][0]
-  now  = o(lo=x, hi=x, n=0, y=Sym())
-  all  = [now]
-  for i,(x,y) in enumerate(lst):
-    if i < len(lst) - big:
-      if now.n >= big:
-         if now.hi - now.lo > iota:
-           if x != lst[i+1][0]:
-             now = o(lo=x,hi=x,n=0,y=Sym())
-             all += [now]
-    now.n += 1
-    now.hi = x
-    now.y.add(y)
-  return all
-
-def merge(b4):
-  "Discretization: merge adjacent bins if they do not reduce the variability."
-  j,tmp = 0,[]
-  while j < len(b4):
-    a = b4[j]
-    if j < len(b4) - 1:
-      b = b4[j+1]
-      cy = a.y.merge(b.y)
-      if cy.var()*.95 <= (a.y.var()*a.n + b.y.var()*b.n)/(a.n + b.n):
-         a = o(lo=a.lo, hi=b.hi, n=a.n+b.n, y=cy)
-         j += 1
-    tmp += [a]
-    j += 1
-  return merge(tmp) if len(tmp) < len(b4) else b4
-
 class Row(o):
   "Data: store rows"
   def __init__(i,lst,sample): 
@@ -242,30 +242,65 @@ class Sample(o):
     "Creation"
     i.cols, i.rows, i.x, i.y, i.my = [],[],[],[], my
     i.keep = keep
-    [i.row(init) for init in inits]
+    [i.add(init) for init in inits]
 
   def __lt__(i,j):
     "Sort tables by their mid values."
     return  Row(i.mid(),i) < Row(j.mid(), j)
+
+  def add(i,lst):
+    """Update: Turn `lst` into either a `header` (if it is row0) 
+    or a `row` (for every other  line)."""
+    lst = lst.cells if type(lst)==Row else lst
+    if i.cols: 
+      row = [c.add(c.prep(x)) for c,x in zip(i.cols,lst)]
+      if i.keep:
+        i.rows += [Row(row,i)]
+    else:  # this is top row and we need to fill in `i.cols`
+      for c,x in enumerate(lst):
+        new = (Skip if "?" in x else (Num if x[0].isupper() else Sym))(i.my,c,x)
+        i.cols += [new]
+        if "?" not in x: 
+          (i.y if ("+" in x or "-" in x or "!" in x) else i.x).append(new)
 
   def clone(i,inits=[]):
     "Copy: return a new sample with same structure as self"
     return Sample(i.my, 
                   inits=[[col.txt for col in i.cols]]+inits)
 
-  def cluster(i):
+  def cluster(i, rows=None):
     "Distance: Divide `d.rows` into a tree of  `depth`."
-    out = []
-    def div(rows, depth):
+    def far(r1,rows):
+      "From `n` random rows, return the `i.my.far*n`-th row from `r1`"
+      n = min(128,len(rows))
+      return sorted([(i.dist(r1,r2),r2) 
+        for r2 in random.sample(rows,n)], key=first)[int(i.my.far*n)]
+    #-------------------------------
+    def polarize(rows):
+      "Return rows seperated by two far points."
+      anywhere = random.choice(rows)
+      _,north  = far(anywhere,rows)
+      c,south  = far(north,rows)
+      x        = lambda a,b: (a**2 + c**2 - b**2)/(2*c)
+      for r in rows: 
+        r.x = x(i.dist(r,north), i.dist(r,south))  
+      rows  = sorted(rows, key=lambda row: row.x)
+      mid   = len(rows)//2
+      return rows[:mid], rows[mid:]
+    #-------------------------------
+    def polarizing(rows, depth=1):
+      "Cluster via recursive polarizing the data."
       if i.my.verbose:
         print('|.. '*(depth-1) + str(len(rows)))
       if depth > i.my.depth  or len(rows) < i.my.end:
         out.append(i.clone(rows))
       else:
-        left, right  = i.polarize(rows)
-        div(left,  depth + 1)
-        div(right, depth + 1)
-    div(i.rows, 1)
+        left, right  = polarize(rows)
+        polarizing(left,  depth + 1)
+        polarizing(right, depth + 1)
+    #-------------------------------
+    out = []
+    polarizing(rows or i.rows)
     return out
 
   def dist(i,r1,r2):
@@ -277,51 +312,14 @@ class Sample(o):
         n  +=1
       return (d/n)**(1/i.my.p)
 
-  def faraway(i, rows, r1):
-    "Distance: to a remove row"
-    random.shuffle(rows)
-    rows = sorted([(i.dist(r1,r2),r2) for r2 in rows[:128]], key=first)
-    return rows[int(i.my.far*len(rows))]
-
-  def header(i,lst):
-    "Creation: Create columns. Store dependent and independent columns in `x` and `y`"
-    for c,x in enumerate(lst):
-      what= Skip if "?" in x else (Num if x[0].isupper() else Sym)
-      new = what(i.my,c,x)
-      i.cols += [new]
-      if "?" not in x:
-        what = i.y if ("+" in x or "-" in x or "!" in x) else i.x
-        what += [new]
- 
   def load(i,file): 
     "Creation: Load data from a csv file in a Data instance."
-    for lst in csv(file): i.row(lst)
+    for lst in csv(file): i.add(lst)
     return i
 
   def mid(i):
     "Query: report middle"
     return [col.mid() for col in i.cols]
-
-  def row(i,lst):
-    """Update: Turn `lst` into either a `header` (if it is row0) 
-    or a `row` (for every other  line)."""
-    lst = lst.cells if type(lst)==Row else lst
-    if i.cols: 
-      row = [c.add(c.prep(x)) for c,x in zip(i.cols,lst)]
-      if i.keep:
-        i.rows += [Row(row,i)]
-    else: i.header(lst)
-
-  def polarize(i,rows):
-    "Distance: Separate rows via their distance to two distant points."
-    anywhere = random.choice(rows)
-    _,north  = i.faraway(rows, anywhere)
-    c,south  = i.faraway(rows, north)
-    for r in rows: 
-      r.x = (i.dist(r,north)**2 + c**2 - i.dist(r,south)**2)/(2*c)
-    rows  = sorted(rows, key=lambda row: row.x)
-    mid   = len(rows)//2
-    return rows[:mid], rows[mid:]
 
   def ys(i):
     "Query: report goals"

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.9
 from sinless import *
 eg = Eg.one
 
