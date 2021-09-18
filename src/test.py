@@ -84,7 +84,7 @@ class Eg:
 
   def dcAuto93(my):
     "distinguish good and bad clusters"
-    my.depth=6
+    #my.depth=6
     Eg._discrete(my,"../data/auto93.csv")
 
   def dcAuto2(my):

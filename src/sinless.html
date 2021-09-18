@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module sinless</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>sinless</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/timm/gits/timm/sinless/src/sinless.py">/Users/timm/gits/timm/sinless/src/sinless.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;code&nbsp;tries&nbsp;to&nbsp;cure&nbsp;the&nbsp;following&nbsp;AI&nbsp;sins:<br>
+-&nbsp;AI&nbsp;tools,&nbsp;that&nbsp;require&nbsp;too&nbsp;much&nbsp;data,&nbsp;are&nbsp;hard&nbsp;to&nbsp;commission<br>
+-&nbsp;AI&nbsp;tools,&nbsp;that&nbsp;cannot&nbsp;explain&nbsp;themselves,&nbsp;do&nbsp;not&nbsp;permit&nbsp;transparency&nbsp;and&nbsp;accountability<br>
+-&nbsp;AI&nbsp;tools,&nbsp;that&nbsp;are&nbsp;needlessly&nbsp;complicated,&nbsp;waste&nbsp;CPU&nbsp;time&nbsp;and&nbsp;people&nbsp;time&nbsp;(and&nbsp;are&nbsp;hard&nbsp;to&nbsp;understand,<br>
+&nbsp;&nbsp;test,&nbsp;and&nbsp;extend)<br>
+-&nbsp;AI&nbsp;tools,&nbsp;used&nbsp;off&nbsp;the&nbsp;shelf&nbsp;without&nbsp;tuning,&nbsp;are&nbsp;sub-optimal<br>
+&nbsp;<br>
+To&nbsp;that&nbsp;end,&nbsp;we&nbsp;try:<br>
+-&nbsp;Use&nbsp;semi-supervised&nbsp;learning&nbsp;to&nbsp;reduce&nbsp;the&nbsp;commission&nbsp;costs&nbsp;(i.e.&nbsp;use&nbsp;fewer&nbsp;labels&nbsp;from&nbsp;the&nbsp;domain)<br>
+-&nbsp;Use&nbsp;symbolic&nbsp;AI&nbsp;tools&nbsp;that&nbsp;generate&nbsp;rules&nbsp;describing&nbsp;regions&nbsp;where&nbsp;concusions&nbsp;hold.<br>
+-&nbsp;Use&nbsp;epsilon&nbsp;domination&nbsp;to&nbsp;stop&nbsp;needlessly&nbsp;explore&nbsp;spurious&nbsp;details<br>
+-&nbsp;Use&nbsp;all&nbsp;the&nbsp;above&nbsp;in&nbsp;Hyperparameter&nbsp;optimizers&nbsp;so&nbsp;you&nbsp;can&nbsp;optimize&nbsp;the&nbsp;tool.<br>
+&nbsp;<br>
+Does&nbsp;this&nbsp;solve&nbsp;all&nbsp;the&nbsp;problems&nbsp;of&nbsp;AI?&nbsp;Of&nbsp;course&nbsp;not.<br>
+But&nbsp;at&nbsp;least&nbsp;its&nbsp;a&nbsp;start.&nbsp;And&nbsp;as<br>
+St.&nbsp;Bernard&nbsp;of&nbsp;Clairvaux&nbsp;used&nbsp;to&nbsp;say:<br>
+"A&nbsp;saint&nbsp;is&nbsp;not&nbsp;someone&nbsp;who&nbsp;never&nbsp;sins,&nbsp;<br>
+but&nbsp;one&nbsp;who&nbsp;sins&nbsp;less&nbsp;and&nbsp;less&nbsp;frequently&nbsp;and&nbsp;gets&nbsp;up&nbsp;more&nbsp;and&nbsp;more&nbsp;quickly"</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="argparse.html">argparse</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="random.html">random</a><br>
+<a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="traceback.html">traceback</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="sinless.html#Discretize">Discretize</a>
+</font></dt><dt><font face="helvetica, arial"><a href="sinless.html#Distance">Distance</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="sinless.html#Num">Num</a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#Discretize">Discretize</a>, <a href="sinless.html#o">o</a>)
+</font></dt><dt><font face="helvetica, arial"><a href="sinless.html#Sample">Sample</a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#o">o</a>)
+</font></dt><dt><font face="helvetica, arial"><a href="sinless.html#Sym">Sym</a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#Discretize">Discretize</a>, <a href="sinless.html#o">o</a>)
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="sinless.html#o">o</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="sinless.html#Row">Row</a>
+</font></dt><dt><font face="helvetica, arial"><a href="sinless.html#Skip">Skip</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Discretize">class <strong>Discretize</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Discretize-merge"><strong>merge</strong></a>(b4)</dt><dd><tt>Discretization:&nbsp;merge&nbsp;adjacent&nbsp;bins&nbsp;if&nbsp;they&nbsp;do&nbsp;not&nbsp;reduce&nbsp;the&nbsp;variability.</tt></dd></dl>
+
+<dl><dt><a name="Discretize-unsuper"><strong>unsuper</strong></a>(lst, big, iota)</dt><dd><tt>Discretization:&nbsp;divide&nbsp;lst&nbsp;into&nbsp;bins&nbsp;of&nbsp;at&nbsp;least&nbsp;size&nbsp;<br>
+`big`,&nbsp;that&nbsp;span&nbsp;more&nbsp;than&nbsp;`iota`</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>Num</strong> = &lt;class 'sinless.Discretize.Num'&gt;</dl>
+
+<dl><dt><strong>Sym</strong> = &lt;class 'sinless.Discretize.Sym'&gt;</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Distance">class <strong>Distance</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>Num</strong> = &lt;class 'sinless.Distance.Num'&gt;</dl>
+
+<dl><dt><strong>Sample</strong> = &lt;class 'sinless.Distance.Sample'&gt;</dl>
+
+<dl><dt><strong>Sym</strong> = &lt;class 'sinless.Distance.Sym'&gt;</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Num">class <strong>Num</strong></a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#Discretize">Discretize</a>, <a href="sinless.html#o">o</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Num-Num">Num</a>(my={:max&nbsp;256},&nbsp;n=0,&nbsp;s='')<br>
+&nbsp;<br>
+Column:&nbsp;Numeric&nbsp;counters.&nbsp;This&nbsp;is&nbsp;a&nbsp;reservoir&nbsp;sampler;<br>
+i.e.&nbsp;after&nbsp;a&nbsp;fixed&nbsp;number&nbsp;of&nbsp;items,&nbsp;new&nbsp;items&nbsp;replace&nbsp;older&nbsp;ones,<br>
+selected&nbsp;at&nbsp;random.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="sinless.html#Num">Num</a></dd>
+<dd><a href="sinless.html#Distance">Distance</a></dd>
+<dd><a href="sinless.html#Discretize">Discretize</a></dd>
+<dd><a href="sinless.html#o">o</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Num-__init__"><strong>__init__</strong></a>(i, my={:max 256}, n=0, s='')</dt><dd><tt>Creation</tt></dd></dl>
+
+<dl><dt><a name="Num-add"><strong>add</strong></a>(i, x)</dt><dd><tt>Update:&nbsp;Keep&nbsp;a&nbsp;representative&nbsp;sample&nbsp;of&nbsp;the&nbsp;`x`&nbsp;values&nbsp;as<br>
+well&nbsp;as&nbsp;the&nbsp;`lo`&nbsp;and&nbsp;`hi`&nbsp;&nbsp;value&nbsp;&nbsp;seen&nbsp;so&nbsp;far.</tt></dd></dl>
+
+<dl><dt><a name="Num-all"><strong>all</strong></a>(i)</dt><dd><tt>Query:&nbsp;Return&nbsp;the&nbsp;stored&nbsp;numbers,&nbsp;sorted.</tt></dd></dl>
+
+<dl><dt><a name="Num-merge"><strong>merge</strong></a>(i, j)</dt><dd><tt>Copy:&nbsp;merge&nbsp;two&nbsp;numeric&nbsp;counters</tt></dd></dl>
+
+<dl><dt><a name="Num-mid"><strong>mid</strong></a>(i)</dt><dd><tt>Query:&nbsp;mid&nbsp;point&nbsp;of&nbsp;the&nbsp;numbers.</tt></dd></dl>
+
+<dl><dt><a name="Num-norm"><strong>norm</strong></a>(i, x)</dt><dd><tt>Query:&nbsp;return&nbsp;0..1</tt></dd></dl>
+
+<dl><dt><a name="Num-per"><strong>per</strong></a>(i, p=0.5, lo=None, hi=None)</dt><dd><tt>Query:&nbsp;Return&nbsp;the&nbsp;item&nbsp;that&nbsp;is&nbsp;`p-th`&nbsp;beteeen&nbsp;`lo`&nbsp;and&nbsp;`hi`</tt></dd></dl>
+
+<dl><dt><a name="Num-prep"><strong>prep</strong></a>(i, x)</dt><dd><tt>Creation:&nbsp;Coerce&nbsp;`x`&nbsp;to&nbsp;a&nbsp;float.</tt></dd></dl>
+
+<dl><dt><a name="Num-var"><strong>var</strong></a>(i)</dt><dd><tt>&lt;img&nbsp;align=right&nbsp;width=300&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;src="<a href="https://miro.medium.com/max/1400/1*IZ2II2HYKeoMrdLU5jW6Dw.png">https://miro.medium.com/max/1400/1*IZ2II2HYKeoMrdLU5jW6Dw.png</a>"&gt;<br>
+Query:&nbsp;variability.<br>
+As&nbsp;well&nbsp;know,&nbsp;&nbsp;plus&nbsp;or&nbsp;minus&nbsp;(1,2)&nbsp;sd&nbsp;is&nbsp;(66%,95%)&nbsp;of&nbsp;the&nbsp;area&nbsp;<br>
+under&nbsp;the&nbsp;normal&nbsp;curve.&nbsp;&nbsp;Another&nbsp;number&nbsp;of&nbsp;interest&nbsp;is&nbsp;that&nbsp;&nbsp;plus&nbsp;or&nbsp;<br>
+minus&nbsp;1.28&nbsp;sd&nbsp;is&nbsp;90%&nbsp;of&nbsp;the&nbsp;mass.&nbsp;&nbsp;This&nbsp;means&nbsp;that&nbsp;one&nbsp;standard&nbsp;<br>
+deviation&nbsp;is&nbsp;90%&nbsp;of&nbsp;the&nbsp;mass&nbsp;divided&nbsp;by&nbsp;(1.28*2)=2.56.&nbsp;Hence,<br>
+to&nbsp;compute&nbsp;something&nbsp;analogous&nbsp;to&nbsp;sd&nbsp;from&nbsp;any&nbsp;distribution,&nbsp;<br>
+sort&nbsp;it&nbsp;and&nbsp;look&nbsp;at&nbsp;the&nbsp;90th&nbsp;and&nbsp;10th&nbsp;percentile.&nbsp;&lt;br&nbsp;clear=all&gt;</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>Num</strong> = &lt;class 'sinless.Distance.Num'&gt;</dl>
+
+<dl><dt><strong>Sample</strong> = &lt;class 'sinless.Distance.Sample'&gt;</dl>
+
+<dl><dt><strong>Sym</strong> = &lt;class 'sinless.Distance.Sym'&gt;</dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#Discretize">Discretize</a>:<br>
+<dl><dt><a name="Num-unsuper"><strong>unsuper</strong></a>(lst, big, iota)</dt><dd><tt>Discretization:&nbsp;divide&nbsp;lst&nbsp;into&nbsp;bins&nbsp;of&nbsp;at&nbsp;least&nbsp;size&nbsp;<br>
+`big`,&nbsp;that&nbsp;span&nbsp;more&nbsp;than&nbsp;`iota`</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><a name="Num-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Row">class <strong>Row</strong></a>(<a href="sinless.html#o">o</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Row">Row</a>(lst,&nbsp;sample)<br>
+&nbsp;<br>
+Data:&nbsp;store&nbsp;rows<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="sinless.html#Row">Row</a></dd>
+<dd><a href="sinless.html#o">o</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Row-__init__"><strong>__init__</strong></a>(i, lst, sample)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Row-__lt__"><strong>__lt__</strong></a>(i, j)</dt><dd><tt>Does&nbsp;row1&nbsp;win&nbsp;over&nbsp;row2?</tt></dd></dl>
+
+<dl><dt><a name="Row-ys"><strong>ys</strong></a>(i)</dt><dd><tt>Query:&nbsp;the&nbsp;goal&nbsp;values&nbsp;of&nbsp;this&nbsp;row</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><a name="Row-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Sample">class <strong>Sample</strong></a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#o">o</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Sample-Sample">Sample</a>(my,&nbsp;inits=[])<br>
+&nbsp;<br>
+Data:&nbsp;store&nbsp;rows&nbsp;and&nbsp;columns<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="sinless.html#Sample">Sample</a></dd>
+<dd><a href="sinless.html#Distance">Distance</a></dd>
+<dd><a href="sinless.html#o">o</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Sample-__init__"><strong>__init__</strong></a>(i, my, inits=[])</dt><dd><tt>Creation</tt></dd></dl>
+
+<dl><dt><a name="Sample-__lt__"><strong>__lt__</strong></a>(i, j)</dt><dd><tt>Sort&nbsp;tables&nbsp;by&nbsp;their&nbsp;mid&nbsp;values.</tt></dd></dl>
+
+<dl><dt><a name="Sample-clone"><strong>clone</strong></a>(i, inits=[])</dt><dd><tt>Copy:&nbsp;return&nbsp;a&nbsp;new&nbsp;sample&nbsp;with&nbsp;same&nbsp;structure&nbsp;as&nbsp;self</tt></dd></dl>
+
+<dl><dt><a name="Sample-header"><strong>header</strong></a>(i, lst)</dt><dd><tt>Creation:&nbsp;Create&nbsp;columns.&nbsp;Store&nbsp;dependent&nbsp;and&nbsp;independent&nbsp;columns&nbsp;in&nbsp;`x`&nbsp;and&nbsp;`y`</tt></dd></dl>
+
+<dl><dt><a name="Sample-load"><strong>load</strong></a>(i, file)</dt><dd><tt>Creation:&nbsp;Load&nbsp;data&nbsp;from&nbsp;a&nbsp;csv&nbsp;file&nbsp;in&nbsp;a&nbsp;Data&nbsp;instance.</tt></dd></dl>
+
+<dl><dt><a name="Sample-mid"><strong>mid</strong></a>(i)</dt><dd><tt>Query:&nbsp;report&nbsp;middle</tt></dd></dl>
+
+<dl><dt><a name="Sample-row"><strong>row</strong></a>(i, lst)</dt><dd><tt>Update:&nbsp;Turn&nbsp;`lst`&nbsp;into&nbsp;either&nbsp;a&nbsp;`header`&nbsp;(if&nbsp;it&nbsp;is&nbsp;row0)&nbsp;<br>
+or&nbsp;a&nbsp;`row`&nbsp;(for&nbsp;every&nbsp;other&nbsp;&nbsp;line).</tt></dd></dl>
+
+<dl><dt><a name="Sample-ys"><strong>ys</strong></a>(i)</dt><dd><tt>Query:&nbsp;report&nbsp;goals</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>Num</strong> = &lt;class 'sinless.Distance.Num'&gt;</dl>
+
+<dl><dt><strong>Sample</strong> = &lt;class 'sinless.Distance.Sample'&gt;</dl>
+
+<dl><dt><strong>Sym</strong> = &lt;class 'sinless.Distance.Sym'&gt;</dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><a name="Sample-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Skip">class <strong>Skip</strong></a>(<a href="sinless.html#o">o</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Skip">Skip</a>(_,&nbsp;n=0,&nbsp;s='')<br>
+&nbsp;<br>
+Column:&nbsp;Make&nbsp;something&nbsp;that&nbsp;ignores&nbsp;everything&nbsp;it&nbsp;sees.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="sinless.html#Skip">Skip</a></dd>
+<dd><a href="sinless.html#o">o</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Skip-__init__"><strong>__init__</strong></a>(i, _, n=0, s='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Skip-add"><strong>add</strong></a>(i, x)</dt></dl>
+
+<dl><dt><a name="Skip-mid"><strong>mid</strong></a>(i)</dt></dl>
+
+<dl><dt><a name="Skip-prep"><strong>prep</strong></a>(i, x)</dt></dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><a name="Skip-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Sym">class <strong>Sym</strong></a>(<a href="sinless.html#Distance">Distance</a>, <a href="sinless.html#Discretize">Discretize</a>, <a href="sinless.html#o">o</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Sym-Sym">Sym</a>(my={},&nbsp;n=0,&nbsp;s='')<br>
+&nbsp;<br>
+Symbol&nbsp;counter.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="sinless.html#Sym">Sym</a></dd>
+<dd><a href="sinless.html#Distance">Distance</a></dd>
+<dd><a href="sinless.html#Discretize">Discretize</a></dd>
+<dd><a href="sinless.html#o">o</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Sym-__init__"><strong>__init__</strong></a>(i, my={}, n=0, s='')</dt><dd><tt>Creation</tt></dd></dl>
+
+<dl><dt><a name="Sym-add"><strong>add</strong></a>(i, x, n=1)</dt><dd><tt>Update:&nbsp;&nbsp;symbol&nbsp;counts.</tt></dd></dl>
+
+<dl><dt><a name="Sym-merge"><strong>merge</strong></a>(i, j)</dt><dd><tt>Copy:&nbsp;merge&nbsp;two&nbsp;symbol&nbsp;counters</tt></dd></dl>
+
+<dl><dt><a name="Sym-mid"><strong>mid</strong></a>(i)</dt><dd><tt>Query:&nbsp;Central&nbsp;tendency</tt></dd></dl>
+
+<dl><dt><a name="Sym-prep"><strong>prep</strong></a>(i, x)</dt><dd><tt>Creation:&nbsp;Coerce&nbsp;`x`&nbsp;to&nbsp;a&nbsp;string.</tt></dd></dl>
+
+<dl><dt><a name="Sym-var"><strong>var</strong></a>(i)</dt><dd><tt>Query:&nbsp;variability</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="sinless.html#Distance">Distance</a>:<br>
+<dl><dt><strong>Num</strong> = &lt;class 'sinless.Distance.Num'&gt;</dl>
+
+<dl><dt><strong>Sample</strong> = &lt;class 'sinless.Distance.Sample'&gt;</dl>
+
+<dl><dt><strong>Sym</strong> = &lt;class 'sinless.Distance.Sym'&gt;</dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#Discretize">Discretize</a>:<br>
+<dl><dt><a name="Sym-unsuper"><strong>unsuper</strong></a>(lst, big, iota)</dt><dd><tt>Discretization:&nbsp;divide&nbsp;lst&nbsp;into&nbsp;bins&nbsp;of&nbsp;at&nbsp;least&nbsp;size&nbsp;<br>
+`big`,&nbsp;that&nbsp;span&nbsp;more&nbsp;than&nbsp;`iota`</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="sinless.html#o">o</a>:<br>
+<dl><dt><a name="Sym-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="o">class <strong>o</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#o">o</a>(**d)<br>
+&nbsp;<br>
+Return&nbsp;a&nbsp;class&nbsp;can&nbsp;print&nbsp;itself&nbsp;(hiding&nbsp;'private'&nbsp;keys)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="o-__init__"><strong>__init__</strong></a>(i, **d)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="o-__repr__"><strong>__repr__</strong></a>(i)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-cli"><strong>cli</strong></a>(usage, dict={'bins': (&lt;class 'float'&gt;, 0.5, 'min bin size is n**bin'), 'cohen': (&lt;class 'float'&gt;, 0.35, 'ignore differences less than cohen*sd'), 'depth': (&lt;class 'int'&gt;, 5, 'dendogram depth'), 'end': (&lt;class 'int'&gt;, 4, 'stopping criteria'), 'far': (&lt;class 'float'&gt;, 0.9, 'where to find far samples'), 'loud': (&lt;class 'bool'&gt;, False, 'loud mode: print stacktrace on error'), 'max': (&lt;class 'int'&gt;, 500, 'max samples held  by `Nums`'), 'p': (&lt;class 'int'&gt;, 2, 'co-efficient on distance equation'), 'seed': (&lt;class 'int'&gt;, 256, 'random number seed'), 'todo': (&lt;class 'str'&gt;, '', 'todo: function (to be run at start-up)'), 'Todo': (&lt;class 'str'&gt;, False, 'list available items for -t')})</dt><dd><tt>(1)&nbsp;Execute&nbsp;a&nbsp;command-line&nbsp;parse&nbsp;that&nbsp;uses&nbsp;`dict`&nbsp;keys&nbsp;as&nbsp;&nbsp;command&nbsp;line&nbsp;&nbsp;flags<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(so&nbsp;expect&nbsp;`dict`&nbsp;values&nbsp;to&nbsp;be&nbsp;tuples&nbsp;(type,&nbsp;defaultValue,help));&nbsp;&nbsp;&nbsp;<br>
+(2)&nbsp;Define&nbsp;switches&nbsp;for&nbsp;&nbsp;defaults&nbsp;that&nbsp;re&nbsp;`False`;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+(3)&nbsp;If&nbsp;keys&nbsp;repeat,&nbsp;make&nbsp;the&nbsp;&nbsp;second&nbsp;one&nbsp;upper&nbsp;case.</tt></dd></dl>
+ <dl><dt><a name="-csv"><strong>csv</strong></a>(file, sep=',', dull='([\\n\\t\\r ]|#.*)')</dt><dd><tt>Yield&nbsp;lines&nbsp;from&nbsp;comma&nbsp;repeated&nbsp;files,&nbsp;deleting&nbsp;`dull`&nbsp;things.</tt></dd></dl>
+ <dl><dt><a name="-eg"><strong>eg</strong></a>(f)</dt></dl>
+ <dl><dt><a name="-first"><strong>first</strong></a>(a)</dt><dd><tt>First&nbsp;item</tt></dd></dl>
+ <dl><dt><a name="-fr"><strong>fr</strong></a> = random()<font color="#909090"><font face="helvetica, arial"> method of <a href="random.html#Random">random.Random</a> instance</font></font></dt><dd><tt>random()&nbsp;-&gt;&nbsp;x&nbsp;in&nbsp;the&nbsp;interval&nbsp;[0,&nbsp;1).</tt></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>(funs)</dt><dd><tt>(1)&nbsp;Update&nbsp;the&nbsp;config&nbsp;using&nbsp;any&nbsp;command-line&nbsp;settings.<br>
+(2)&nbsp;Maybe,&nbsp;udpate&nbsp;&nbsp;`todo`&nbsp;from&nbsp;the&nbsp;&nbsp;command&nbsp;line.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>CONFIG</strong> = {'Todo': (&lt;class 'str'&gt;, False, 'list available items for -t'), 'bins': (&lt;class 'float'&gt;, 0.5, 'min bin size is n**bin'), 'cohen': (&lt;class 'float'&gt;, 0.35, 'ignore differences less than cohen*sd'), 'depth': (&lt;class 'int'&gt;, 5, 'dendogram depth'), 'end': (&lt;class 'int'&gt;, 4, 'stopping criteria'), 'far': (&lt;class 'float'&gt;, 0.9, 'where to find far samples'), 'loud': (&lt;class 'bool'&gt;, False, 'loud mode: print stacktrace on error'), 'max': (&lt;class 'int'&gt;, 500, 'max samples held  by `Nums`'), 'p': (&lt;class 'int'&gt;, 2, 'co-efficient on distance equation'), 'seed': (&lt;class 'int'&gt;, 256, 'random number seed'), ...}<br>
+<strong>crash</strong> = -1</td></tr></table>
+</body></html>
