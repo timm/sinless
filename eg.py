@@ -5,6 +5,7 @@ eg = Eg.one
 @eg  
 def fails(my): 
  "test if fails are caught"
+ print("Can my test engine catch fails?")
  assert 1/0
 
 @eg
@@ -41,17 +42,17 @@ def numDist(my):
 @eg
 def sample(my):
   "can i sample from disc?"
-  s = Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("data/auto93.csv")
   print(s.x[1])
   print([(c.txt,c.w) for c in s.y])
 
 @eg
 def dist(my):
   "Looking for faraway things"
-  s = Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("data/auto93.csv")
   random.shuffle(s.rows)
   for row1 in s.rows[:10]:
-    c,row2 = s.faraway(s.rows,row1)
+    c,row2 = s.faraway(row1,s.rows)
     print("")
     print(row1.cells)
     print(row2.cells,int(100*c))
@@ -59,11 +60,11 @@ def dist(my):
 @eg
 def cluster(my):
   "cluster stuff"
-  s = Sample(my).load("../data/auto93.csv")
+  s = Sample(my).load("data/auto93.csv")
   for clus in sorted(s.cluster()):
     print(clus.ys())
 
-def _discrete(my,f="../data/auto93.csv"):
+def _discrete(my,f="data/auto93.csv"):
   "distinguish good and bad clusters"
   s = Sample(my).load(f)
   clusters = sorted(s.cluster())
@@ -81,16 +82,16 @@ def _discrete(my,f="../data/auto93.csv"):
 @eg
 def dcAuto93(my):
   "distinguish good and bad clusters"
-  _discrete(my,"../data/auto93.csv")
+  _discrete(my,"data/auto93.csv")
 
 @eg
 def dcAuto2(my):
   "distinguish good and bad clusters"
-  _discrete(my,"../data/auto2.csv")
+  _discrete(my,"data/auto2.csv")
     
 @eg
 def egfft(my):
-  s = Sample(my).load("../data/auto93.csv")
-  fft(s,my)
+  s = Sample(my).load("data/auto93.csv")
+  Fft(s,my)
   
 Eg.run()

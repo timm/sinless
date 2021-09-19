@@ -66,7 +66,8 @@ class Sym(o):
     "Query: `Return values seen in  i` is good and `j` is bad"
     for x in set(i.has | j.has): 
       yield o(at=i.at, name=i.txt, lo=x, hi=x, 
-              best= i.has.get(x,0), rest=j.has.get(x,0))
+              best=i.has.get(x,0), bests=i.n,
+              rest=j.has.get(x,0), rests=j.n)
 
   def dist(i,x,y):
     "Distance: between two symbols"
@@ -167,8 +168,8 @@ class Num(o):
     if len(bins) > 1:
       for bin in bins:
         yield o(at=i.at, name=i.txt, lo=bin.lo, hi=bin.hi, 
-                best= bin.y.has.get(best,0), 
-                rest= bin.y.has.get(rest,0))
+                best= bin.y.has.get(best,0), bests = i.n,
+                rest= bin.y.has.get(rest,0), rests = j.n)
 
   def dist(i,x,y):
     "Distance: between two numbers."
@@ -263,7 +264,7 @@ class Sample(o):
         what = Skip if "?" in x else (Num  if x[0].isupper() else Sym)
         new  = what(i.my,c,x)
         i.cols += [new]
-        if "?" not in x: 
+        if "?" not in x: # then also add `new` to either `x` or `y`
           (i.y if ("+" in x or "-" in x or "!" in x) else i.x).append(new)
 
   def clone(i,inits=[]):
@@ -296,6 +297,14 @@ class Sample(o):
       n  +=1
     return (d/n)**(1/i.my.p)
 
+  def faraway(i,r1,rows):
+     """Rerturn something faraway from `r1` within `rows`.
+     Specifically: from `n` random rows, return the 
+     `i.my.far*n`-th row from `r1`"""
+     n = min(128,len(rows))
+     return sorted([(i.dist(r1,r2),r2) 
+       for r2 in random.sample(rows,n)], key=first)[int(i.my.far*n)]
+
   def load(i,file): 
     "Creation: Load data from a csv file in a Data instance."
     for lst in csv(file): i.add(lst)
@@ -307,18 +316,14 @@ class Sample(o):
 
   def polarize(i,rows=None):
     "Return rows seperated by two far points."
-    def far(r1,rows):
-      "From `n` random rows, return the `i.my.far*n`-th row from `r1`"
-      n = min(128,len(rows))
-      return sorted([(i.dist(r1,r2),r2) 
-        for r2 in random.sample(rows,n)], key=first)[int(i.my.far*n)]
     rows     = rows or i.rows
     anywhere = random.choice(rows)
-    _,north  = far(anywhere,rows)
-    c,south  = far(north,rows)
-    cosine   = lambda a,b,c: (a**2 + c**2 - b**2)/(2*c)
+    _,north  = i.faraway(anywhere,rows)
+    c,south  = i.faraway(north,rows)
     for r in rows: 
-      r.x = cosine(i.dist(r,north), i.dist(r,south), c)  
+      a   = i.dist(r,north)
+      b   = i.dist(r,south)
+      r.x = (a**2 + c**2 - b**2)/(2*c)
     rows  = sorted(rows, key=lambda row: row.x)
     mid   = len(rows)//2
     return rows[:mid], rows[mid:]
@@ -327,25 +332,23 @@ class Sample(o):
     "Query: report goals"
     return [col.mid() for col in i.y]
 
-def value(rule, bin, bests, rests):
-  funs = o(plan    = lambda b,r: b**2/(b+r) if b>r else 0,
-           monitor = lambda b,r: r**2/(b+r) if r>b else 0,
-           novel   = lambda b,r: 1/(b+r))
-  return funs[rule](bin.best/bests, bin.rest/rests)
+class Fft(o):
+  def __init__(i,all,my):
+    best, rest = sorted([all.clone(rows) for rows in all.polarize()])
+    bins = [bin for xbest,xrest in zip(best.x, rest.x) 
+                for bin       in xbest.discretize(xrest,my)]
+    bestIdea  = i.values("plan",   bins)[-1]
+    worstIdea = i.values("monitor",bins)[-1]
 
-# XXXX test
-def fft(s,my):
-  def ordered(rule,like,hate):
-    return  sorted([(value(rule,bin,like.n,hate.n), bin) for b in bins],
-                     reverse=True, key=first)[1]
-
-  best, rest = sorted([s.clone(rows) for rows in s.polarize()])
-  bins = [bin for like,hate in zip(best.x, rest.x) 
-              for bin in like.discretize(hate,my)]
-  plan  = ordered("plan",best,rest)
-  monitor  = ordered("monitor",best,rest)
-  print(plan)
-  print(monitor)
+  def value(i,rule, bin):
+    rules = o(plan    = lambda b,r: b**2/(b+r) if b>r else 0,
+              monitor = lambda b,r: r**2/(b+r) if r>b else 0,
+              novel   = lambda b,r: 1/(b+r))
+    return rules[rule](bin.best/bin.bests, bin.rest/bin.rests)
+  
+  def values(i,rule,bins):
+    bins = [(i.value(rule,bin), bin) for bin in bins]
+    return sorted([(n,bin) for n,bin in bins if n > 0],key=first)
 
 def csv(file, sep=",", dull=r'([\n\t\r ]|#.*)'):
   "Yield lines from comma repeated files, deleting `dull` things."
