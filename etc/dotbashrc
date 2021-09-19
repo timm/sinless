@@ -52,9 +52,9 @@ _doc() {
   logo="https://github.com/timm/sinless/raw/main/etc/img/sinless.png"
   foot="Sinless v0.1 (c) 2021 Tim Menzies, unlicense.org. Share and enjoy."
   url="http://github.com/timm/sinless/blob/main/src/sinless"
-  $pdoc -e sinless=$url  --logo $logo --footer-text "$foot" -o $sinless21/docs sinless.py
+  $pdoc -e sinless=$url  --no-search --logo $logo --footer-text "$foot" -o $sinless21/docs sinless.py
   mv $sinless21/docs/sinless.html $sinless21/docs/index.html
-  $pdoc -e sinless=$url  --logo $logo --footer-text "$foot"                   sinless.py)
+  $pdoc -e sinless=$url  --no-search --logo $logo --footer-text "$foot"                   sinless.py)
 }
 here() { cd $1; basename `pwd`; }
 

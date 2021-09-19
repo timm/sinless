@@ -217,7 +217,7 @@ class Num(o):
     deviation is 90% of the mass divided by (1.28*2)=2.56. Hence,
     to compute something analogous to sd from any distribution, 
     sort it and look at the 90th and 10th percentile. <br clear=all>"""
-    return (i.per(.9) - i.per(.1)) / 2.56 if i._all else 0
+    return (i.per(.9) - i.per(.1)) / 2.56 if len(i._all) < 2  else 0
 
 class Row(o):
   "Data: store rows"
