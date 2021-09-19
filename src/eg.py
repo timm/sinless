@@ -87,5 +87,10 @@ def dcAuto93(my):
 def dcAuto2(my):
   "distinguish good and bad clusters"
   _discrete(my,"../data/auto2.csv")
-     
+    
+@eg
+def egfft(my):
+  s = Sample(my).load("../data/auto93.csv")
+  fft(s,my)
+  
 Eg.run()

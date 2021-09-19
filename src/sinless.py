@@ -22,6 +22,7 @@ CONFIG = dict(
   depth= (int,  5,    "dendogram depth"),     
   end  = (int,  4,    "stopping criteria"),    
   far  = (float,.9,   "where to find far samples"),      
+  rule = (str,  "plan","assessment rule for a bin"),
   loud = (bool, False,"loud mode: print stacktrace on error"),    
   max  = (int,  500,  "max samples held  by `Nums`"),     
   p    = (int,  2,    "co-efficient on distance equation"),    
@@ -34,6 +35,7 @@ CONFIG = dict(
 class o:
   "Return a class can print itself (hiding 'private' keys)"
   def __init__(i, **d)  : i.__dict__.update(d)
+  def __getitem__(i, k) : return i.__dict__[k]
   def __repr__(i) : return "{"+ ', '.join(
     [f":{k} {v}" for k, v in i.__dict__.items() if  k[0] != "_"])+"}"
 
@@ -123,7 +125,7 @@ class Num(o):
   def discretize(columnFromHere, sameColumnFromThere, my):
     "Query: `Return values seen in  i` is good and `j` is bad"
     def unsuper(lst,big,iota):
-      "split itno bins of at least size `big`, that span more than `iota`"
+      "make bins of size at least `big`, that span more than `iota`"
       lst  = sorted(lst, key=first)
       x= lst[0][0]
       now  = o(lo=x, hi=x, n=0, y=Sym())
@@ -161,11 +163,12 @@ class Num(o):
          (bad, rest) for bad  in j._all]
     n1,n2 = len(i._all), len(j._all)
     iota = my.cohen * (i.var()*n1 + j.var()*n2) / (n1 + n2)
-    ranges = merge(unsuper(xys, len(xys)**my.bins, iota))
-    if len(ranges) > 1:
-      for r in ranges:
-        yield o(at=i.at, name=i.txt, lo=r.lo, hi=r.hi, 
-                best= r.y.has.get(best,0), rest=r.y.has.get(rest,0))
+    bins = merge(unsuper(xys, len(xys)**my.bins, iota))
+    if len(bins) > 1:
+      for bin in bins:
+        yield o(at=i.at, name=i.txt, lo=bin.lo, hi=bin.hi, 
+                best= bin.y.has.get(best,0), 
+                rest= bin.y.has.get(rest,0))
 
   def dist(i,x,y):
     "Distance: between two numbers."
@@ -198,8 +201,7 @@ class Num(o):
     a  = i.all()
     lo = lo or 0
     hi = hi or len(a)
-    if hi==0: return "?"
-    return a[int(lo + p*(hi - lo))]
+    return "?" if hi==0 else a[int(lo + p*(hi - lo))]
 
   def prep(i,x): 
     "Creation: Coerce `x` to a float."
@@ -207,7 +209,7 @@ class Num(o):
 
   def var(i): 
     """<img align=right width=300 
-        src="https://miro.medium.com/max/1400/1*IZ2II2HYKeoMrdLU5jW6Dw.png">
+    src="https://miro.medium.com/max/1400/1*IZ2II2HYKeoMrdLU5jW6Dw.png">
     Query: variability.
     As well know,  plus or minus (1,2) sd is (66%,95%) of the area 
     under the normal curve.  Another number of interest is that  plus or 
@@ -215,12 +217,12 @@ class Num(o):
     deviation is 90% of the mass divided by (1.28*2)=2.56. Hence,
     to compute something analogous to sd from any distribution, 
     sort it and look at the 90th and 10th percentile. <br clear=all>"""
-    return (i.per(.9) - i.per(.1)) / 2.56
+    return (i.per(.9) - i.per(.1)) / 2.56 if i._all else 0
 
 class Row(o):
   "Data: store rows"
   def __init__(i,lst,sample): 
-     i.sample,i.cells, i.ranges = sample, lst,[None]*len(lst)
+     i.sample,i.cells, = sample, lst
 
   def __lt__(i,j):
     "Does row1 win over row2?"
@@ -258,36 +260,18 @@ class Sample(o):
         i.rows += [Row(row,i)]
     else:  # this is top row and we need to fill in `i.cols`
       for c,x in enumerate(lst):
-        new = (Skip if "?" in x else (Num if x[0].isupper() else Sym))(i.my,c,x)
+        what = Skip if "?" in x else (Num  if x[0].isupper() else Sym)
+        new  = what(i.my,c,x)
         i.cols += [new]
         if "?" not in x: 
           (i.y if ("+" in x or "-" in x or "!" in x) else i.x).append(new)
 
   def clone(i,inits=[]):
     "Copy: return a new sample with same structure as self"
-    return Sample(i.my, 
-                  inits=[[col.txt for col in i.cols]]+inits)
+    return Sample(i.my, inits=[[col.txt for col in i.cols]] + inits)
 
   def cluster(i, rows=None):
     "Distance: Divide `d.rows` into a tree of  `depth`."
-    def far(r1,rows):
-      "From `n` random rows, return the `i.my.far*n`-th row from `r1`"
-      n = min(128,len(rows))
-      return sorted([(i.dist(r1,r2),r2) 
-        for r2 in random.sample(rows,n)], key=first)[int(i.my.far*n)]
-    #-------------------------------
-    def polarize(rows):
-      "Return rows seperated by two far points."
-      anywhere = random.choice(rows)
-      _,north  = far(anywhere,rows)
-      c,south  = far(north,rows)
-      x        = lambda a,b: (a**2 + c**2 - b**2)/(2*c)
-      for r in rows: 
-        r.x = x(i.dist(r,north), i.dist(r,south))  
-      rows  = sorted(rows, key=lambda row: row.x)
-      mid   = len(rows)//2
-      return rows[:mid], rows[mid:]
-    #-------------------------------
     def polarizing(rows, depth=1):
       "Cluster via recursive polarizing the data."
       if i.my.verbose:
@@ -295,7 +279,7 @@ class Sample(o):
       if depth > i.my.depth  or len(rows) < i.my.end:
         out.append(i.clone(rows))
       else:
-        left, right  = polarize(rows)
+        left, right = i.polarize(rows)
         polarizing(left,  depth + 1)
         polarizing(right, depth + 1)
     #-------------------------------
@@ -304,13 +288,13 @@ class Sample(o):
     return out
 
   def dist(i,r1,r2):
-      "Distance: between two rows"
-      d, n = 0, 1E-32
-      for col in i.x:
-        inc = col.dist( r1.cells[col.at], r2.cells[col.at] )
-        d  += inc**i.my.p
-        n  +=1
-      return (d/n)**(1/i.my.p)
+    "Distance: between two rows"
+    d, n = 0, 1E-32
+    for col in i.x:
+      inc = col.dist( r1.cells[col.at], r2.cells[col.at] )
+      d  += inc**i.my.p
+      n  +=1
+    return (d/n)**(1/i.my.p)
 
   def load(i,file): 
     "Creation: Load data from a csv file in a Data instance."
@@ -321,9 +305,40 @@ class Sample(o):
     "Query: report middle"
     return [col.mid() for col in i.cols]
 
+  def polarize(i,rows=None):
+    "Return rows seperated by two far points."
+    def far(r1,rows):
+      "From `n` random rows, return the `i.my.far*n`-th row from `r1`"
+      n = min(128,len(rows))
+      return sorted([(i.dist(r1,r2),r2) 
+        for r2 in random.sample(rows,n)], key=first)[int(i.my.far*n)]
+    rows     = rows or i.rows
+    anywhere = random.choice(rows)
+    _,north  = far(anywhere,rows)
+    c,south  = far(north,rows)
+    cosine   = lambda a,b,c: (a**2 + c**2 - b**2)/(2*c)
+    for r in rows: 
+      r.x = cosine(i.dist(r,north), i.dist(r,south), c)  
+    rows  = sorted(rows, key=lambda row: row.x)
+    mid   = len(rows)//2
+    return rows[:mid], rows[mid:]
+
   def ys(i):
     "Query: report goals"
     return [col.mid() for col in i.y]
+
+def value(my, bin, bests, rests):
+  funs = o(plan    = lambda b,r: b**2/(b+r) if b>r else 0,
+           monitor = lambda b,r: r**2/(b+r) if r>n else 0,
+           novel   = lambda b,r: 1/(b+r))
+  return int(100*funs[my.rule](bin.best/bests, bin.rest/rests))
+
+def fft(s,my):
+  best, rest = sorted([s.clone(rows) for rows in s.polarize()])
+  tmp = sorted([(value(my,bin,like.n,hate.n), bin) 
+                 for like,hate in zip(best.x,rest.x)
+                   for bin in like.discretize(hate,my)], key=first)
+  [print(x) for x in tmp]
 
 def csv(file, sep=",", dull=r'([\n\t\r ]|#.*)'):
   "Yield lines from comma repeated files, deleting `dull` things."
@@ -359,9 +374,11 @@ class Eg:
       k0 = k0.upper() if k0 in used else k0
       c = used[k0] = k0  # (3)
       if default == False: # (2)
-        add("-"+c, dest=k, default=False, help=help, action="store_true")
+        add("-"+c, dest=k, default=False, 
+            help=help, action="store_true")
       else: # (1)
-        add("-"+c, dest=k, default=default, help=help + " [" + str(default) + "]",
+        add("-"+c, dest=k, default=default, 
+            help=help + " [" + str(default) + "]",
             type=type(default), metavar=k)
     return p.parse_args().__dict__
 
@@ -380,7 +397,7 @@ class Eg:
   def run():
     """(1) Update the config using any command-line settings.
        (2) Maybe, update `todo` from the  command line."""    
-    my = o(**Eg.cli("python3 range.py [OPTIONS]",CONFIG))
+    my = o(**Eg.cli("python3.9 eg.py [OPTIONS]",CONFIG))
     if my.Todo: 
       return [print(f"{name:>15} : {f.__doc__ or ''}") 
               for name,f in Eg.all.items()]
