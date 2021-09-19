@@ -5,7 +5,7 @@ src="https://images.gr-assets.com/authors/1228260867p4/2734978.jpg">
 "A saint is not someone who never sins, but one who sins less and less 
 frequently and gets up more and more quickly."<br>
 ― St. Bernard of Clairvaux
-
+<br clear=all>
 
 Here are some AI sins, and their potential cure:
 -  If AI
