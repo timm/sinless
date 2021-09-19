@@ -329,16 +329,17 @@ class Sample(o):
 
 def value(my, bin, bests, rests):
   funs = o(plan    = lambda b,r: b**2/(b+r) if b>r else 0,
-           monitor = lambda b,r: r**2/(b+r) if r>n else 0,
+           monitor = lambda b,r: r**2/(b+r) if r>b else 0,
            novel   = lambda b,r: 1/(b+r))
-  return int(100*funs[my.rule](bin.best/bests, bin.rest/rests))
+  return funs[my.rule](bin.best/bests, bin.rest/rests)
 
 def fft(s,my):
   best, rest = sorted([s.clone(rows) for rows in s.polarize()])
   tmp = sorted([(value(my,bin,like.n,hate.n), bin) 
                  for like,hate in zip(best.x,rest.x)
-                   for bin in like.discretize(hate,my)], key=first)
-  [print(x) for x in tmp]
+                   for bin in like.discretize(hate,my)], 
+               reverse=True, key=first)
+  [print(f"{n:.2f} {bin}") for n,bin in tmp if n>0]
 
 def csv(file, sep=",", dull=r'([\n\t\r ]|#.*)'):
   "Yield lines from comma repeated files, deleting `dull` things."
