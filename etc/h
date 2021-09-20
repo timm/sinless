@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # vim: ft=bash ts=2 sw=2 sts=2 et :
  
-here="$(cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )"
+here="$(cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )/.."
 bash --init-file "$here/etc/dotbashrc" -i

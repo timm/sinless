@@ -30,7 +30,7 @@ alias bye="gp; tmux detach"
 alias eg="python3.9 eg.py "
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias ful="bash $sinless21/ful "
+alias etch=".  $sinless21/etc/h "
 alias gp="git add *;git commit -am save;git push;git status"
 alias grep='grep --color=auto'
 alias h="history"
@@ -53,7 +53,7 @@ _doc() {
   url="http://github.com/timm/sinless/blob/main/sinless"
   $pdoc -e sinless=$url  --no-search --logo $logo --footer-text "$foot" -o $sinless21 sinless.py
   mv $sinless21/sinless.html $sinless21/index.html
-  $pdoc -e sinless=$url  --no-search --logo $logo --footer-text "$foot"                   sinless.py)
+  $pdoc -e sinless=$url  --no-search --logo $logo --footer-text "$foot"               sinless.py)
 }
 here() { cd $1; basename `pwd`; }
 
