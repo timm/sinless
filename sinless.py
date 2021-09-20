@@ -26,7 +26,8 @@ CONFIG = dict(
   loud = (bool, False,"loud mode: print stacktrace on error"),    
   max  = (int,  500,  "max samples held  by `Nums`"),     
   p    = (int,  2,    "co-efficient on distance equation"),    
-  seed = (int,  256,  "random number seed"),      
+  seed = (int,  10014,  "random number seed"),      
+  support=(int, 2,    "use x**support to score a range"),
   todo = (str,  "",   "todo: function (to be run at start-up)"),     
   Todo = (str, False, "list available items for -t"),
   verbose=(str,False, "enable verbose prints")
@@ -67,7 +68,8 @@ class Sym(o):
     for x in set(i.has | j.has): 
       yield o(at=i.at, name=i.txt, lo=x, hi=x, 
               best=i.has.get(x,0), bests=i.n,
-              rest=j.has.get(x,0), rests=j.n)
+              rest=j.has.get(x,0), rests=j.n,
+              first=False,         last=False)
 
   def dist(i,x,y):
     "Distance: between two symbols"
@@ -145,7 +147,7 @@ class Num(o):
     #--------------------------------
     def merge(b4):
       "merge adjacent bins if they do not reduce the variability."
-      j,tmp = 0,[]
+      n,j,tmp = 0,0,[]
       while j < len(b4):
         a = b4[j]
         if j < len(b4) - 1:
@@ -166,10 +168,11 @@ class Num(o):
     iota = my.cohen * (i.var()*n1 + j.var()*n2) / (n1 + n2)
     bins = merge(unsuper(xys, len(xys)**my.bins, iota))
     if len(bins) > 1:
-      for bin in bins:
+      for n,bin in enumerate(bins):
         yield o(at=i.at, name=i.txt, lo=bin.lo, hi=bin.hi, 
-                best= bin.y.has.get(best,0), bests = i.n,
-                rest= bin.y.has.get(rest,0), rests = j.n)
+                best=  bin.y.has.get(best,0), bests = i.n,
+                rest=  bin.y.has.get(rest,0), rests = j.n,
+                first= n==0,                  last  = n==len(bins)-1)
 
   def dist(i,x,y):
     "Distance: between two numbers."
@@ -333,16 +336,45 @@ class Sample(o):
     return [col.mid() for col in i.y]
 
 class Fft(o):
-  def __init__(i,all,my):
+  def __init__(i,all,my,stop = None, level=0,up=None,branch=None,branches=None):
+    i.my     = my
+    branch   = branch or []
+    branches = branches or []
+    stop     = stop or 2*len(all.rows)**my.bins
     best, rest = sorted([all.clone(rows) for rows in all.polarize()])
     bins = [bin for xbest,xrest in zip(best.x, rest.x) 
                 for bin       in xbest.discretize(xrest,my)]
-    bestIdea  = i.values("plan",   bins)[-1]
-    worstIdea = i.values("monitor",bins)[-1]
+    bestIdea  = i.values("plan",   bins)[-1][1]
+    worstIdea = i.values("monitor",bins)[-1][1]
+    pre = "|.. " *level
+    for yes,no,idea in [(1,0,bestIdea)]: #(0,1,worstIdea)]:
+      leaf,tree = all.clone(), all.clone()
+      for row in all.rows:
+        (leaf if i.match(idea,row) else tree).add(row)
+      print(yes,pre+"if "+i.show(idea) + " then", leaf.ys(), len(leaf.rows))
+      if len(tree.rows) <= stop:
+        print(no,pre+"else", tree.ys(), len(tree.rows))
+        print("")
+      else:
+        Fft(tree,my,stop=stop,level=level+1,up = i, branch=branch, branches=branches)
+        
+  def match(i, bin, row):
+    v=row.cells[bin.at]
+    if   v=="?"   : return True
+    elif bin.first: return v <= bin.hi
+    elif bin.last : return v >= bin.lo
+    else          : return bin.lo <= v <= bin.hi
+
+  def show(i,bin):
+    if   bin.lo == bin.hi: return f"{bin.name} == {bin.lo}"
+    elif bin.first: return f"{bin.name} <= {bin.hi}"
+    elif bin.last : return f"{bin.name} >= {bin.lo}"
+    else          : return f"{bin.lo} <= {bin.name} <= {bin.hi}"
 
   def value(i,rule, bin):
-    rules = o(plan    = lambda b,r: b**2/(b+r) if b>r else 0,
-              monitor = lambda b,r: r**2/(b+r) if r>b else 0,
+    s = i.my.support
+    rules = o(plan    = lambda b,r: b**s/(b+r) if b>r else 0,
+              monitor = lambda b,r: r**s/(b+r) if r>b else 0,
               novel   = lambda b,r: 1/(b+r))
     return rules[rule](bin.best/bin.bests, bin.rest/bin.rests)
   
