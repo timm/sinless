@@ -336,27 +336,29 @@ class Sample(o):
     return [col.mid() for col in i.y]
 
 class Fft(o):
-  def __init__(i,all,my,stop = None, level=0,up=None,branch=None,branches=None):
-    i.my     = my
-    branch   = branch or []
-    branches = branches or []
-    stop     = stop or 2*len(all.rows)**my.bins
+  def __init__(i,all,my,branch,branches,stop = None, level=0):
+    i.my       = my
+    stop       = stop or 2*len(all.rows)**my.bins
     best, rest = sorted([all.clone(rows) for rows in all.polarize()])
-    bins = [bin for xbest,xrest in zip(best.x, rest.x) 
-                for bin       in xbest.discretize(xrest,my)]
-    bestIdea  = i.values("plan",   bins)[-1][1]
-    worstIdea = i.values("monitor",bins)[-1][1]
+    bins       = [bin for xbest,xrest in zip(best.x, rest.x) 
+                  for bin       in xbest.discretize(xrest,my)]
+    bestIdea   = i.values("plan",   bins)[-1][1]
+    worstIdea  = i.values("monitor",bins)[-1][1]
     pre = "|.. " *level
-    for yes,no,idea in [(1,0,bestIdea)]: #(0,1,worstIdea)]:
+    for yes,no,idea in [(1,0,bestIdea), (0,1,worstIdea)]:
       leaf,tree = all.clone(), all.clone()
       for row in all.rows:
         (leaf if i.match(idea,row) else tree).add(row)
-      print(yes,pre+"if "+i.show(idea) + " then", leaf.ys(), len(leaf.rows))
+      branch1  = kopy(branch)
+      branch1 += [o(at=idea.at, lo=idea.lo, hi=idea.hi,
+                          type=yes, txt="if "+i.show(idea)+" then", 
+                          then=leaf.ys(), n=len(leaf.rows))]
       if len(tree.rows) <= stop:
-        print(no,pre+"else", tree.ys(), len(tree.rows))
-        print("")
+        branch1  += [o(type=no, txt="  ",
+                            then=tree.ys(), n= len(tree.rows))]
+        branches += [branch1]
       else:
-        Fft(tree,my,stop=stop,level=level+1,up = i, branch=branch, branches=branches)
+        Fft(tree,my,branch1,branches,stop=stop,level=level+1)
         
   def match(i, bin, row):
     v=row.cells[bin.at]

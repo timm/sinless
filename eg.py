@@ -90,8 +90,15 @@ def dcAuto2(my):
   _discrete(my,"data/auto2.csv")
     
 @eg
-def egfft(my):
+def fft(my):
   s = Sample(my).load("data/auto93.csv")
-  Fft(s,my)
+  all=[]
+  Fft(s,my,[],all)
+  for rule,one in enumerate(all): 
+    print("")
+    print(rule)
+    for n,node in enumerate(one):
+      print("",node.type,(" else" if n else "     ")+
+            node.txt, node.then, f"({node.n})")
   
 Eg.run()
