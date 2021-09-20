@@ -432,10 +432,10 @@ class Eg:
     random.seed(my.seed)
     try: 
       f(my)
-      print(f"\x1b[1;32m✔ {f.__name__}\x1b[0m")
+      print(f"\x1b[1;32m✔ {f.__name__}\x1b[0m") # print green
     except Exception as err:
       Eg.crash += 1
-      print(f"\x1b[1;31m✘  {f.__name__}\x1b[0m")
+      print(f"\x1b[1;31m✘  {f.__name__}\x1b[0m") # print red
       if my.loud: print(traceback.format_exc())
   
   def run():
